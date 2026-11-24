@@ -271,8 +271,8 @@ export default definePlugin({
             });
         }
 
-        if (IS_VESKTOP && VesktopNative.clipboard) {
-            VesktopNative.clipboard.copyImage(await imageData.arrayBuffer(), url);
+        if (IS_VESKTOP && ZycordNative?.clipboard) {
+            ZycordNative?.clipboard.copyImage(await imageData.arrayBuffer(), url);
             return;
         } else {
             navigator.clipboard.write([

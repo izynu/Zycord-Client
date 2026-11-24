@@ -64,9 +64,9 @@ export function initStyles() {
         });
     }
 
-    if (IS_VESKTOP && VesktopNative.app.getRendererCss) {
-        VesktopNative.app.getRendererCss().then(css => vesktopCssNode!.textContent = css);
-        VesktopNative.app.onRendererCssUpdate(newCss => {
+    if (IS_VESKTOP && ZycordNative?.app?.getRendererCss) {
+        ZycordNative?.app?.getRendererCss().then(css => vesktopCssNode!.textContent = css);
+        ZycordNative?.app?.onRendererCssUpdate(newCss => {
             vesktopCssNode!.textContent = newCss;
         });
     }

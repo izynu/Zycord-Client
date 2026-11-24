@@ -13,7 +13,7 @@ import definePlugin from "@utils/types";
 
 // Reporter ignores plugin targets, so we need to mock VesktopPatchGlobals & Vesktop version for it to work
 
-const vesktopVersion: string = IS_VESKTOP ? VesktopNative.app.getVersion() : "0";
+const vesktopVersion: string = IS_VESKTOP ? ZycordNative?.app?.getVersion() : "0";
 
 if (IS_REPORTER && !IS_VESKTOP) {
     window.VesktopPatchGlobals = new Proxy({}, {
