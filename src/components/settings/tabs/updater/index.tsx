@@ -39,7 +39,7 @@ import { CommonProps, HashLink, Newer, Updatable } from "./Components";
 function VesktopSection() {
     if (!IS_VESKTOP) return null;
 
-    const [isVesktopOutdated] = useAwaiter<boolean>(VesktopNative.app.isOutdated, { fallbackValue: false });
+    const [isVesktopOutdated] = useAwaiter<boolean>(ZycordNative?.app?.isOutdated, { fallbackValue: false });
 
     return (
         <Flex className={Margins.bottom20} flexDirection="column" gap="1em">
@@ -56,7 +56,7 @@ function VesktopSection() {
                     <Heading className={Margins.bottom8}>Vesktop Outdated</Heading>
                     <Flex flexDirection="column" gap="0.5em">
                         <Paragraph>Your version of Vesktop is outdated!</Paragraph>
-                        <Button variant="link" onClick={() => VesktopNative.app.openUpdater()}>Open Vesktop Updater</Button>
+                        <Button variant="link" onClick={() => ZycordNative?.app?.openUpdater()}>Open Zycord Updater</Button>
                     </Flex>
                 </Card>
             )}

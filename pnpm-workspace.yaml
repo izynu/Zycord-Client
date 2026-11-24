@@ -14,6 +14,7 @@ catalog:
     "@vap/core": "0.0.12"
     "@vap/shiki": "0.10.5"
     "diff": "^9.0.0"
+    "electron": "^38.2.0"
     "esbuild": "^0.28.2"
     "eslint-plugin-path-alias": "2.1.0"
     "eslint-plugin-simple-header": "^1.2.1"
@@ -56,6 +57,8 @@ allowedDeprecatedVersions:
 
 allowBuilds:
     esbuild: true
+    electron: true
+    electron-winstaller: true
 
 pmOnFail: warn
 minimumReleaseAgeExclude:

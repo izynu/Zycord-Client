@@ -39,7 +39,7 @@ const makeVesktopSwitcher = (branch: string) => () => {
         throw new Error(`Already on ${branch}`);
 
     Vesktop.Settings.store.discordBranch = branch;
-    VesktopNative.app.relaunch();
+    ZycordNative?.app?.relaunch();
 };
 
 const define: typeof Object.defineProperty =

@@ -1,0 +1,88 @@
+Zycord Client for Windows
+=========================
+
+Zycord Client, Copyright (c) 2026 Zynu
+
+This product is a modified version of Vencord.
+
+Modification notice (GNU GPL v3, Section 5(a))
+---------------------------------------------
+Zycord is a modified version of Vencord. The Vencord source code was forked
+and modified by Zynu for use in Zycord. Date of modification: 2026-11-24.
+
+Zycord is a standalone Electron client for Windows. It opens https://discord.com
+in its own application window and injects a forked, rebranded build of the
+Vencord renderer. Zycord does not patch, modify, or redistribute the official
+Discord desktop application.
+
+Upstream projects
+-----------------
+Zycord bundles a rebranded fork of Vencord:
+
+    Vencord
+    Copyright (c) Vendicated and contributors
+    https://github.com/Vendicated/Vencord
+    Licensed under the GNU General Public License v3.0 or later
+
+The Electron shell architecture of Zycord follows Vesktop:
+
+    Vesktop
+    Copyright (c) Vendicated and Vencord contributors
+    https://github.com/Vencord/Vesktop
+    Licensed under the GNU General Public License v3.0 or later
+
+Copyright notices in individual source files have been retained as required by
+GNU GPL v3, Section 4.
+
+Licence
+-------
+Zycord is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+The complete text of the licence is included in the file LICENSE in the root of
+this repository, and must be distributed together with any copy of this work.
+
+Because Zycord includes code licensed under the GNU GPL v3, the work as a whole
+must remain under the GNU GPL v3.0 or later. It may not be relicensed, and no
+additional restrictions may be placed on its use, modification, or
+redistribution (GNU GPL v3, Sections 5 and 10).
+
+Files under other licences
+--------------------------
+The following files are derived from Apache-2.0 licensed works and are NOT
+covered by the GNU GPL. Their original notices are retained in place, and a
+copy of the Apache License, Version 2.0 is included alongside each of them.
+
+  src/api/DataStore/index.ts  and  src/api/DataStore/LICENSE
+      Derived from idb-keyval
+      Copyright 2016, Jake Archibald
+      Copyright 2022, Vendicated
+      Licensed under the Apache License, Version 2.0
+
+  src/main/themes/index.ts  and  src/main/themes/LICENSE
+      BetterDiscord addon meta parser
+      Copyright 2023 BetterDiscord contributors
+      Copyright 2023 Vendicated and Vencord contributors
+      Licensed under the Apache License, Version 2.0
+
+Corresponding Source
+--------------------
+Zycord is distributed as a compiled binary. In accordance with GNU GPL v3,
+Section 6, the Corresponding Source for the binary you received is available at:
+
+    https://github.com/SahilVerlice/Zycord
+
+No affiliation
+--------------
+Zycord is not affiliated with, authorized by, sponsored by, or endorsed by
+Discord Inc., Vendicated, or the Vencord project. All trademarks are the
+property of their respective owners. "Discord" is a trademark of Discord Inc.
+and is used here descriptively only, to identify the service this client
+connects to. "Vencord" and "Vesktop" refer to the upstream open-source projects
+credited above.
