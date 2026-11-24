@@ -87,4 +87,7 @@ for (const f of required) {
     copyFileSync(join("dist", f), join("dist", "js", f));
 }
 
+// The BrowserWindow icon is resolved from __dirname at runtime.
+copyFileSync("build/icon.png", join("dist", "js", "icon.png"));
+
 console.log("Zycord shell built → dist/js/main.js, dist/js/preload.js");

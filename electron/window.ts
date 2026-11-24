@@ -58,8 +58,13 @@ export function createMainWindow() {
         minWidth: MIN_WIDTH,
         minHeight: MIN_HEIGHT,
         title: "Zycord",
+        icon: join(__dirname, "icon.png"),
         backgroundColor: "#313338",
+        // A native Windows title bar and frame. Without this Electron defaults to
+        // frameless, which makes the app read as "a web page in a window".
+        frame: true,
         autoHideMenuBar: true,
+        show: false,
         webPreferences: {
             nodeIntegration: false,
             sandbox: true,
@@ -73,6 +78,9 @@ export function createMainWindow() {
 
     mainWin.webContents.session.setUserAgent(BrowserUserAgent);
     mainWin.webContents.setUserAgent(BrowserUserAgent);
+
+    // Avoid the white flash while Discord's first paint is pending.
+    mainWin.once("ready-to-show", () => mainWin?.show());
 
     makeLinksOpenExternally(mainWin);
 

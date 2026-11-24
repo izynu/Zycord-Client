@@ -26,6 +26,100 @@ import plugins from "~plugins";
 
 const logger = new Logger("Settings");
 
+/**
+ * Plugins Zycord turns on for a fresh install.
+ *
+ * Upstream Vencord ships every plugin disabled, so a new user sees stock Discord
+ * until they find Settings > Plugins. Zycord is opinionated: the features people
+ * install a client mod for are on out of the box. Each entry can still be turned
+ * off in Settings > Plugins, and only applies when the user has no saved value.
+ */
+export const ZYCORD_DEFAULT_PLUGINS = [
+    // Appearance / information density
+    "ShowHiddenChannels",
+    "ShowHiddenThings",
+    "ShowMeYourName",
+    "MemberCount",
+    "ServerListIndicators",
+    "PlatformIndicators",
+    "RoleColorEverywhere",
+    "AlwaysExpandRoles",
+    "BetterRoleContext",
+    "BetterRoleDot",
+    "ViewIcons",
+    "UserMessagesPronouns",
+    "UserVoiceShow",
+    "ShowConnections",
+    "MutualGroupDMs",
+    "PermissionsViewer",
+    "ServerInfo",
+    "WhoReacted",
+    // Chat quality of life
+    "MessageLogger",
+    "MessageLinkEmbeds",
+    "Unindent",
+    "FixCodeblockGap",
+    "ShikiCodeblocks",
+    "NoReplyMention",
+    "NoMosaic",
+    "ImageZoom",
+    "ImageLink",
+    "FullSearchContext",
+    "BetterSearch",
+    "KeepCurrentChannel",
+    "JumpToTop",
+    "QuickReply",
+    "PreviewMessage",
+    "ShowAllMessageButtons",
+    "ReadAllNotificationsButton",
+    "PinDMs",
+    "TypingIndicator",
+    "TypingTweaks",
+    "SilentTyping",
+    "CharacterCounter",
+    "SendTimestamps",
+    "ReplyTimestamp",
+    "UnsuppressEmbeds",
+    "RevealAllSpoilers",
+    // Media + voice
+    "PictureInPicture",
+    "BetterGifPicker",
+    "BetterGifAltText",
+    "GifPaste",
+    "StickerPaste",
+    "VolumeBooster",
+    "VoiceMessages",
+    "VoiceDownload",
+    "CallTimer",
+    "DisableCallIdle",
+    // Privacy / control
+    "NoTrack",
+    "NoDevtoolsWarning",
+    "NoTypingAnimation",
+    "BetterSessions",
+    "RelationshipNotifier",
+    "NoBlockedMessages",
+    "NoPendingCount",
+    "NoOnboardingDelay",
+    "NoF1",
+    "NoMaskedUrlPaste",
+    "ClearURLs",
+    "BetterSettings",
+    "BetterUploadButton",
+    "Experiments",
+    "PauseInvitesForever",
+    "FakeNitro",
+    // Desktop integration
+    "DirectFileDownload",
+    "WebContextMenus",
+    "WebKeybinds",
+    "WebScreenShareFixes",
+    "OpenInApp",
+    "SpotifyControls",
+    "SpotifyCrack",
+    "SpotifyShareCommands",
+];
+
 export interface SettingsPluginUiElement {
     enabled: boolean;
     // TODO
@@ -145,7 +239,7 @@ export const SettingsStore = new SettingsStoreClass(settings, {
 
         if (path === "plugins" && key in plugins)
             return target[key] = {
-                enabled: IS_REPORTER || plugins[key].required || plugins[key].enabledByDefault || false
+                enabled: IS_REPORTER || plugins[key].required || plugins[key].enabledByDefault || ZYCORD_DEFAULT_PLUGINS.includes(key) || false
             };
 
         // Since the property is not set, check if this is a plugin's setting and if so, try to resolve
@@ -245,6 +339,35 @@ export function migratePluginSettings(name: string, ...oldNames: string[]) {
             break;
         }
     }
+}
+
+/**
+ * Applies {@link ZYCORD_DEFAULT_PLUGINS} to an install that already has a settings file.
+ *
+ * getDefaultValue only fires for keys that are absent, but every plugin key is written
+ * to settings.json on first launch, so existing installs would otherwise stay on stock
+ * Discord forever. This runs once: it flips the listed plugins on, then records a marker
+ * so it never re-enables something the user turned off afterwards.
+ */
+const DEFAULTS_APPLIED_KEY = "zycordDefaultsApplied";
+export function applyZycordDefaultPlugins() {
+    if (SettingsStore.plain[DEFAULTS_APPLIED_KEY]) return;
+
+    const { plugins } = SettingsStore.plain;
+    let changed = 0;
+
+    for (const name of ZYCORD_DEFAULT_PLUGINS) {
+        if (!(name in plugins)) continue;
+        const entry = plugins[name];
+        if (!entry || entry.enabled) continue;
+
+        entry.enabled = true;
+        changed++;
+    }
+
+    (SettingsStore.plain as any)[DEFAULTS_APPLIED_KEY] = true;
+    SettingsStore.markAsChanged();
+    logger.info(`Applied Zycord defaults: enabled ${changed} plugin(s)`);
 }
 
 export function migratePluginSetting(pluginName: string, oldSetting: string, newSetting: string) {
