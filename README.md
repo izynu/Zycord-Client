@@ -77,6 +77,13 @@ tracks upstream Vencord, with Zycord-specific shell behaviour layered on top.
 
 ---
 
+## How it works
+
+For the injection chain, build outputs, and packaging internals, see
+[ARCHITECTURE.md](ARCHITECTURE.md).
+
+---
+
 ## Disclaimer
 
 **Zycord is an unofficial third-party client.**

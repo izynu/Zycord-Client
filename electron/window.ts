@@ -2,8 +2,6 @@
  * Zycord, a Discord client
  * Copyright (c) 2026 Zynu
  * SPDX-License-Identifier: GPL-3.0-or-later
- *
- * Based on Vesktop, Copyright (c) 2023 Vendicated and Vencord contributors
  */
 
 import { BrowserWindow, dialog, Menu, screen, session, shell } from "electron";

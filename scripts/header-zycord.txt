@@ -1,0 +1,3 @@
+Zycord, a Discord client
+Copyright (c) {year} Zynu
+SPDX-License-Identifier: GPL-3.0-or-later

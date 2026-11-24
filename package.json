@@ -2,7 +2,7 @@
     "name": "zycord",
     "version": "1.0.0",
     "private": "true",
-    "description": "Zycord Client — a Discord client. By Zynu.",
+    "description": "Zycord Client \u2014 a Discord client. By Zynu.",
     "homepage": "https://github.com/SahilVerlice/Zycord#readme",
     "bugs": {
         "url": "https://github.com/SahilVerlice/Zycord/issues"
@@ -84,7 +84,7 @@
         "appId": "app.zycord.client",
         "productName": "Zycord",
         "executableName": "Zycord",
-        "copyright": "Copyright © 2026 Zynu. Based on Vencord by Vendicated and contributors (GPL-3.0-or-later).",
+        "copyright": "Copyright \u00a9 2026 Zynu. Based on Vencord by Vendicated and contributors (GPL-3.0-or-later).",
         "directories": {
             "output": "release",
             "buildResources": "build"
@@ -100,10 +100,13 @@
             "target": [
                 {
                     "target": "nsis",
-                    "arch": ["x64"]
+                    "arch": [
+                        "x64"
+                    ]
                 }
             ],
-            "artifactName": "Zycord-Client-Setup-${version}-${arch}.${ext}"
+            "artifactName": "Zycord-Client-Setup-${version}-${arch}.${ext}",
+            "icon": "build/icon.ico"
         },
         "nsis": {
             "oneClick": false,
@@ -112,7 +115,9 @@
             "createDesktopShortcut": true,
             "createStartMenuShortcut": true,
             "shortcutName": "Zycord",
-            "deleteAppDataOnUninstall": false
+            "deleteAppDataOnUninstall": false,
+            "installerIcon": "build/icon.ico",
+            "uninstallerIcon": "build/icon.ico"
         }
     }
 }

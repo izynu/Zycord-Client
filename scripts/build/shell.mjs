@@ -21,6 +21,7 @@ const define = {
     "process.env.NODE_ENV": JSON.stringify(IS_DEV ? "development" : "production")
 };
 
+/** @type {import("esbuild").BuildOptions} */
 const shared = {
     bundle: true,
     minify: !IS_DEV,
@@ -36,9 +37,7 @@ const shared = {
     }
 };
 
-/**
- * @type {import("esbuild").BuildOptions[]}
- */
+/** @type {import("esbuild").BuildOptions[]} */
 const configs = [
     {
         ...shared,

@@ -29,7 +29,7 @@ function isVesktopVersionAtLeast(version: string) {
 
 export default definePlugin({
     name: "VesktopPatches",
-    description: "Contains patches for Vesktop",
+    description: "Contains patches for Zycord",
     required: true,
     authors: [Devs.Ven],
 

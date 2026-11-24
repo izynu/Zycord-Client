@@ -2,8 +2,6 @@
  * Zycord, a Discord client
  * Copyright (c) 2026 Zynu
  * SPDX-License-Identifier: GPL-3.0-or-later
- *
- * Based on Vesktop, Copyright (c) 2023 Vendicated and Vencord contributors
  */
 
 import { contextBridge, ipcRenderer, webFrame } from "electron/renderer";
@@ -49,7 +47,7 @@ function watchDiscordStartup() {
             }
 
             const origin = stack?.split("\n").find(line => line.trimStart().startsWith("at ")) ?? filename;
-            const fromMod = /file:\/\/\/(?:ZycordRenderer\b|WebpackModule\d+\b)/.test(origin);
+            const fromMod = /file:\/\/\/(?:VencordDesktopRenderer\b|WebpackModule\d+\b)/.test(origin);
             if (fromMod) {
                 finish(message);
             } else {
