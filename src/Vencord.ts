@@ -40,7 +40,7 @@ import { SettingsRouter } from "@webpack/common";
 import { get as dsGet } from "./api/DataStore";
 import { NotificationData, showNotification } from "./api/Notifications";
 import { initPluginManager, PMLogger, startAllPlugins } from "./api/PluginManager";
-import { PlainSettings, Settings, SettingsStore } from "./api/Settings";
+import { applyZycordDefaultPlugins, PlainSettings, Settings, SettingsStore } from "./api/Settings";
 import { areLocalSettingsDirty, getCloudSettings, getCloudSyncDirection, markLocalSettingsDirty, putCloudSettings, shouldCloudSync } from "./api/SettingsSync/cloudSync";
 import { relaunch } from "./utils/native";
 import { checkForUpdates, update, UpdateLogger } from "./utils/updater";
@@ -173,6 +173,7 @@ async function init() {
     }
 }
 
+applyZycordDefaultPlugins();
 initPluginManager();
 initStyles();
 startAllPlugins(StartAt.Init);
