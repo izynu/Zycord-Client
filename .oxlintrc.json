@@ -44,7 +44,7 @@
                 "simple-header/header": [
                     "error",
                     {
-                        "files": ["scripts/header-new.txt", "scripts/header-old.txt"],
+                        "files": ["scripts/header-new.txt", "scripts/header-old.txt", "scripts/header-zycord.txt"],
                         "templates": { "author": [".*", "Vendicated and contributors"] }
                     }
                 ],

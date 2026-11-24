@@ -44,18 +44,18 @@ function VesktopSection() {
     return (
         <Flex className={Margins.bottom20} flexDirection="column" gap="1em">
             <Card variant="info">
-                <Heading className={Margins.bottom8}>Vesktop & Vencord</Heading>
-                <Paragraph>Vesktop and Vencord are two separate things. This updater is for Vencord.</Paragraph>
+                <Heading className={Margins.bottom8}>Zycord Updates</Heading>
+                <Paragraph>Zycord is updated in two parts: the desktop app and the client mod. This updater is for the client mod.</Paragraph>
                 <Paragraph className={Margins.top8}>
-                    You receive separate popups for Vesktop updates. You can also manually update by installing the <Link href="https://vesktop.dev/install">latest version</Link>.
+                    You receive separate popups for app updates. You can also manually update by installing the <Link href="https://vesktop.dev/install">latest version</Link>.
                 </Paragraph>
             </Card>
 
             {isVesktopOutdated && (
                 <Card variant="warning">
-                    <Heading className={Margins.bottom8}>Vesktop Outdated</Heading>
+                    <Heading className={Margins.bottom8}>Zycord Outdated</Heading>
                     <Flex flexDirection="column" gap="0.5em">
-                        <Paragraph>Your version of Vesktop is outdated!</Paragraph>
+                        <Paragraph>Your version of Zycord is outdated!</Paragraph>
                         <Button variant="link" onClick={() => ZycordNative?.app?.openUpdater()}>Open Zycord Updater</Button>
                     </Flex>
                 </Card>
@@ -84,14 +84,14 @@ function Updater() {
             <div className="vc-settings-switches">
                 <FormSwitch
                     title="Automatically update"
-                    description="Automatically update Vencord without confirmation prompt"
+                    description="Automatically update Zycord without confirmation prompt"
                     value={settings.autoUpdate}
                     onChange={(v: boolean) => settings.autoUpdate = v}
                     hideBorder
                 />
                 <FormSwitch
                     title="Get notified when an automatic update completes"
-                    description="Show a notification when Vencord automatically updates"
+                    description="Show a notification when Zycord automatically updates"
                     value={settings.autoUpdateNotification}
                     onChange={(v: boolean) => settings.autoUpdateNotification = v}
                     disabled={!settings.autoUpdate}

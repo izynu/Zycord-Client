@@ -80,7 +80,7 @@ interface SettingsLayoutBuilder {
 const settings = definePluginSettings({
     settingsLocation: {
         type: OptionType.SELECT,
-        description: "Where to put the Vencord settings section",
+        description: "Where to put the Zycord settings section",
         options: [
             { label: "At the very top", value: "top" },
             { label: "Above the Nitro section", value: "aboveNitro", default: true },
@@ -92,7 +92,7 @@ const settings = definePluginSettings({
     },
     includeVencordInfoWhenCopying: {
         type: OptionType.BOOLEAN,
-        description: "Also copy Vencord info (Vencord, Electron, Chromium) when clicking the version info in the bottom left area of the Settings page",
+        description: "Also copy Zycord info (Zycord, Electron, Chromium) when clicking the version info in the bottom left area of the Settings page",
         default: true
     }
 });

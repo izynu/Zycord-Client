@@ -2,9 +2,6 @@
  * Zycord, a Discord client
  * Copyright (c) 2026 Zynu
  * SPDX-License-Identifier: GPL-3.0-or-later
- *
- * Based on Vesktop, Copyright (c) 2023 Vendicated and Vencord contributors
- * Based on Vencord, Copyright (c) 2022 Vendicated and contributors
  */
 
 export const APP_NAME = "Zycord";

@@ -2,8 +2,6 @@
  * Zycord, a Discord client
  * Copyright (c) 2026 Zynu
  * SPDX-License-Identifier: GPL-3.0-or-later
- *
- * Based on Vesktop, Copyright (c) 2023 Vendicated and Vencord contributors
  */
 
 import { ipcMain } from "electron";
@@ -37,6 +35,8 @@ export function registerZycordIpc() {
         e.returnValue = readFileSync(bundlePath("vencordDesktopRenderer.css"), "utf-8");
     });
 
+    // The preload reads this synchronously via sendSync, so it must be an `on` handler.
+    // ipcMain.handle only replies to invoke(), which would block the renderer forever.
     ipcMain.on(ZycordIpc.GET_VERSION, e => {
         e.returnValue = process.env.ZYCORD_VERSION ?? "1.0.0";
     });

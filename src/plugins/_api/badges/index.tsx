@@ -37,8 +37,8 @@ import { ContextMenuApi, Menu, Modal, openModal, showToast, UserStore } from "@w
 
 const ContributorBadge: ProfileBadge = {
     id: "vencord_contributor_badge",
-    description: "Vencord Contributor",
-    infoLabel: "Vencord",
+    description: "Zycord Contributor",
+    infoLabel: "Zycord",
     rarity: BadgeRarity.MYTHIC,
     iconSrc: "https://cdn.discordapp.com/emojis/1562267648857997356.webp?size=128",
     largeIconSrc: "https://cdn.discordapp.com/emojis/1562267648857997356.webp?size=512",
@@ -75,7 +75,7 @@ function toDirectoryBadge(b: ProfileBadge, userId: string): DirectoryBadge {
         badge_id: id,
         name: b.name ?? b.description ?? "",
         description: b.detail ?? b.description ?? b.name ?? "",
-        info_label: b.infoLabel ?? "Vencord",
+        info_label: b.infoLabel ?? "Zycord",
         rarity: b.rarity ?? BadgeRarity.COMMON,
         simple_icon_url: b.iconSrc!,
         complex_icon_static_url: b.largeIconSrc ?? b.iconSrc!,
@@ -261,7 +261,7 @@ export default definePlugin({
                 largeIconSrc,
                 description: badge.tooltip,
                 name: badge.tooltip,
-                infoLabel: "Vencord Donor",
+                infoLabel: "Zycord Donor",
                 rarity: BadgeRarity.MYTHIC,
                 position: BadgePosition.START,
                 props: {
@@ -292,7 +292,7 @@ export default definePlugin({
                                     >
                                         <Flex justifyContent="center" alignItems="center" gap="0.5em">
                                             <Heart />
-                                            Vencord Donor
+                                            Zycord Donor
                                         </Flex>
                                     </Text>
                                 }
@@ -314,10 +314,10 @@ export default definePlugin({
                                     </Flex>
                                     <div style={{ padding: "1em" }}>
                                         <Paragraph>
-                                            This badge is a special perk for Vencord Donors
+                                            This badge is a special perk for Zycord Donors
                                         </Paragraph>
                                         <Paragraph className={Margins.top16}>
-                                            Please consider supporting the development of Vencord by becoming a donor. It would mean a lot!!
+                                            Please consider supporting the development of Zycord by becoming a donor. It would mean a lot!!
                                         </Paragraph>
                                     </div>
                                 </div>
