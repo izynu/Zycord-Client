@@ -67,7 +67,6 @@ export const ZYCORD_DEFAULT_PLUGINS = [
     "NoMosaic",
     "ImageZoom",
     "ImageLink",
-    "FullSearchContext",
     "BetterSearch",
     "KeepCurrentChannel",
     "JumpToTop",
@@ -84,8 +83,10 @@ export const ZYCORD_DEFAULT_PLUGINS = [
     "ReplyTimestamp",
     "UnsuppressEmbeds",
     "RevealAllSpoilers",
+    "HideDisabledEmojis",
     // Media + voice
     "PictureInPicture",
+    "MediaPlaybackSpeed",
     "BetterGifPicker",
     "BetterGifAltText",
     "GifPaste",
@@ -125,6 +126,7 @@ export const ZYCORD_DEFAULT_PLUGINS = [
     "SpotifyControls",
     "SpotifyCrack",
     "SpotifyShareCommands",
+    "CustomStatusPresets",
 ];
 
 export interface SettingsPluginUiElement {
@@ -357,7 +359,34 @@ export function migratePluginSettings(name: string, ...oldNames: string[]) {
  * so it never re-enables something the user turned off afterwards.
  */
 const DEFAULTS_APPLIED_KEY = "zycordDefaultsApplied";
+
+/**
+ * Plugins that were shipped enabled in an earlier build but turned out not to
+ * work — either their patch no longer matches Discord's bundle, or they break a
+ * Discord API. They are disabled once, even on installs whose settings file
+ * already recorded the defaults, so nobody is left running a dead feature.
+ */
+const ZYCORD_BROKEN_PLUGINS = [
+    // Patch targets a class method Discord has since removed; the patcher reports
+    // "had no effect" and the feature silently does nothing.
+    "FullSearchContext",
+];
+
+const BROKEN_APPLIED_KEY = "zycordBrokenDisabled";
+
 export function applyZycordDefaultPlugins() {
+    if (!SettingsStore.plain[BROKEN_APPLIED_KEY]) {
+        const { plugins } = SettingsStore.plain;
+        for (const name of ZYCORD_BROKEN_PLUGINS) {
+            const entry = plugins[name];
+            if (!entry?.enabled) continue;
+            entry.enabled = false;
+            logger.info(`Disabled ${name}: it no longer works against Discord's current bundle`);
+        }
+        (SettingsStore.plain as any)[BROKEN_APPLIED_KEY] = true;
+        SettingsStore.markAsChanged();
+    }
+
     if (SettingsStore.plain[DEFAULTS_APPLIED_KEY]) return;
 
     const { plugins } = SettingsStore.plain;
