@@ -6,8 +6,8 @@
 
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Heading } from "@components/Heading";
-import { Margins } from "@utils/margins";
 import { Paragraph } from "@components/Paragraph";
+import { Margins } from "@utils/margins";
 import { React, Slider } from "@webpack/common";
 
 const ZOOM_PLUGIN = "ZycordDesktop";
