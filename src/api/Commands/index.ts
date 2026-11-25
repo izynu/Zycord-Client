@@ -92,13 +92,21 @@ export const _handleCommand = function (cmd: VencordCommand, args: CommandArgume
  * @param opt
  */
 export function prepareOption<O extends CommandOption | VencordCommand>(opt: O): O {
-    opt.displayName ||= opt.name;
-    opt.displayDescription ||= opt.description;
+    // Discord hands back option objects whose displayName/displayDescription are
+    // getter-only. `||=` still throws when assigning to those, so skip any
+    // property that already has a getter.
+    const canAssign = (o: any, key: string) => !Object.getOwnPropertyDescriptor(o, key)?.get;
+
+    if (canAssign(opt, "displayName")) opt.displayName ||= opt.name;
+    if (canAssign(opt, "displayDescription")) opt.displayDescription ||= opt.description;
+
     opt.options?.forEach((opt, i, opts) => {
         // See comment above Placeholders
         if (opt === OptPlaceholder) opts[i] = OptionalMessageOption;
         else if (opt === ReqPlaceholder) opts[i] = RequiredMessageOption;
-        opt.choices?.forEach(x => x.displayName ||= x.name);
+        opt.choices?.forEach(x => {
+            if (canAssign(x, "displayName")) x.displayName ||= x.name;
+        });
 
         prepareOption(opts[i]);
     });
