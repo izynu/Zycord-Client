@@ -37,6 +37,7 @@ const logger = new Logger("Settings");
 export const ZYCORD_DEFAULT_PLUGINS = [
     "ZycordDesktop",
     "SplitLargeMessages",
+    "VoiceChannelChat",
     // Appearance / information density
     "ShowHiddenChannels",
     "ShowHiddenThings",
