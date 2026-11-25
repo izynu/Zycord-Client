@@ -87,6 +87,12 @@ for (const f of required) {
     copyFileSync(join("dist", f), join("dist", "js", f));
 }
 
+// esbuild emits third-party licence notices into .LEGAL.txt sidecars and the
+// bundles reference them by name at runtime, so they must ship alongside.
+for (const f of ["vencordDesktopMain.js.LEGAL.txt", "vencordDesktopRenderer.js.LEGAL.txt"]) {
+    copyFileSync(join("dist", f), join("dist", "js", f));
+}
+
 // The BrowserWindow icon is resolved from __dirname at runtime.
 copyFileSync("build/icon.png", join("dist", "js", "icon.png"));
 
