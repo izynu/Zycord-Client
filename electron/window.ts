@@ -16,6 +16,7 @@ import {
     MIN_WIDTH
 } from "./constants";
 import { ZycordIpc } from "./ipc";
+import { getTray, isQuitting } from "./tray";
 
 let mainWin: BrowserWindow | null = null;
 export const getMainWindow = () => mainWin;
@@ -83,6 +84,15 @@ export function createMainWindow() {
     mainWin.once("ready-to-show", () => mainWin?.show());
 
     makeLinksOpenExternally(mainWin);
+
+    // Close-to-tray: hiding keeps Discord's session and audio alive. Only
+    // intercept while a tray icon exists to reopen the window, and never when
+    // the app is actually quitting.
+    mainWin.on("close", e => {
+        if (isQuitting() || !getTray()) return;
+        e.preventDefault();
+        mainWin?.hide();
+    });
 
     mainWin.on("closed", () => {
         mainWin = null;
