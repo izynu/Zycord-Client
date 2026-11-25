@@ -42,9 +42,9 @@ const friends = {
     requests: [] as string[]
 };
 
-const guildsKey = () => `relationship-notifier-guilds-${UserStore.getCurrentUser().id}`;
-const groupsKey = () => `relationship-notifier-groups-${UserStore.getCurrentUser().id}`;
-const friendsKey = () => `relationship-notifier-friends-${UserStore.getCurrentUser().id}`;
+const guildsKey = () => `relationship-notifier-guilds-${UserStore.getCurrentUser()?.id}`;
+const groupsKey = () => `relationship-notifier-groups-${UserStore.getCurrentUser()?.id}`;
+const friendsKey = () => `relationship-notifier-friends-${UserStore.getCurrentUser()?.id}`;
 
 async function runMigrations() {
     DataStore.delMany(["relationship-notifier-guilds", "relationship-notifier-groups", "relationship-notifier-friends"]);
@@ -137,7 +137,7 @@ export function deleteGuild(id: string) {
 export async function syncGuilds() {
     guilds.clear();
 
-    const me = UserStore.getCurrentUser().id;
+    const me = UserStore.getCurrentUser()?.id;
     for (const [id, { name, icon }] of Object.entries(GuildStore.getGuilds())) {
         if (GuildMemberStore.isMember(id, me))
             guilds.set(id, {

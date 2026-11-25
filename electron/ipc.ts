@@ -15,7 +15,8 @@ export const enum ZycordIpc {
     RENDERER_STARTUP_ERROR = "ZycordRendererStartupError",
     OPEN_EXTERNAL = "ZycordOpenExternal",
     RELAUNCH = "ZycordRelaunch",
-    GET_VERSION = "ZycordGetVersion"
+    GET_VERSION = "ZycordGetVersion",
+    SET_ZOOM = "ZycordSetZoom"
 }
 
 function bundlePath(file: string) {
@@ -44,5 +45,15 @@ export function registerZycordIpc() {
     ipcMain.handle(ZycordIpc.RENDERER_STARTUP_ERROR, (_e, message: string) => {
         console.error("[Zycord] Renderer startup error:", message);
         return message;
+    });
+
+    // Zoom is driven by Chromium itself. The web client has no ZoomLevel to call
+    // because it is not the embedded desktop app, and CSS zoom breaks fixed
+    // positioning, so the real zoom factor is set here.
+    ipcMain.handle(ZycordIpc.SET_ZOOM, (e, level: number) => {
+        const wc = e.sender;
+        // Map a desired scale to Chromium's zoom-level steps (100% is 0).
+        const clamped = Math.min(2, Math.max(0.5, Number(level) || 1));
+        wc.setZoomFactor(clamped);
     });
 }

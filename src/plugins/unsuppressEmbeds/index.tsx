@@ -36,7 +36,7 @@ const messageContextMenuPatch: NavContextMenuPatchCallback = (
     if (!isEmbedSuppressed && !embeds.length && !hasEmbedsInSnapshots) return;
 
     const hasEmbedPerms = channel.isPrivate() || !!(PermissionStore.getChannelPermissions({ id: channel.id }) & PermissionsBits.EMBED_LINKS);
-    if (author.id === UserStore.getCurrentUser().id && !hasEmbedPerms) return;
+    if (author.id === UserStore.getCurrentUser()?.id && !hasEmbedPerms) return;
 
     const menuGroup = findGroupChildrenByChildId("delete", children);
     const deleteIndex = menuGroup?.findIndex(i => i?.props?.id === "delete");

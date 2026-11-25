@@ -146,7 +146,7 @@ export default definePlugin({
     applyDefaultSettings,
     flux: {
         GUILD_JOIN_REQUEST_UPDATE({ guildId, request, status }) {
-            if (status === "APPROVED" && request.user_id === UserStore.getCurrentUser().id)
+            if (status === "APPROVED" && request.user_id === UserStore.getCurrentUser()?.id)
                 applyDefaultSettings(guildId);
         }
     }

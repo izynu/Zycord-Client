@@ -28,11 +28,16 @@ waitFor(["dispatch", "subscribe"], m => {
     // For this reason, use a non import access here.
     Vencord.Api.PluginManager.subscribeAllPluginsFluxEvents(m);
 
-    const cb = () => {
-        m.unsubscribe("CONNECTION_OPEN", cb);
+    const ready = () => {
+        m.unsubscribe("CONNECTION_OPEN", ready);
         _resolveReady();
     };
-    m.subscribe("CONNECTION_OPEN", cb);
+
+    // Resolve once Discord's dispatcher is reachable rather than waiting on
+    // CONNECTION_OPEN. That event only fires after a session opens, so a
+    // logged-out launch would otherwise run the login screen with no plugins.
+    m.subscribe("CONNECTION_OPEN", ready);
+    _resolveReady();
 });
 
 export let ComponentDispatch: any;

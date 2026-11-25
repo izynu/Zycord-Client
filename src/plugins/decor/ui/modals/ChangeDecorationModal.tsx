@@ -186,7 +186,7 @@ function ChangeDecorationModal(props: RenderModalProps) {
                             confirmText: "Log Out",
                             cancelText: "Cancel",
                             onConfirm() {
-                                useAuthorizationStore.getState().remove(UserStore.getCurrentUser().id);
+                                useAuthorizationStore.getState().remove(UserStore.getCurrentUser()?.id);
                                 props.onClose();
                             },
                         });

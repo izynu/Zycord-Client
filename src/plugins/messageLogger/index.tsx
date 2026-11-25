@@ -383,7 +383,7 @@ export default definePlugin({
     shouldIgnore(message: any, isEdit = false) {
         try {
             const { ignoreBots, ignoreSelf, ignoreUsers, ignoreChannels, ignoreGuilds, logEdits, logDeletes } = settings.store;
-            const myId = UserStore.getCurrentUser().id;
+            const myId = UserStore.getCurrentUser()?.id;
 
             return ignoreBots && message.author?.bot ||
                 ignoreSelf && message.author?.id === myId ||

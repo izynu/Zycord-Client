@@ -201,7 +201,7 @@ export default definePlugin({
 
     flux: {
         CALL_UPDATE({ call }: { call: Call; }) {
-            if (call?.ringing?.includes(UserStore.getCurrentUser().id) && settings.store.callNotifications) {
+            if (call?.ringing?.includes(UserStore.getCurrentUser()?.id) && settings.store.callNotifications) {
                 const channel = ChannelStore.getChannel(call.channel_id);
                 sendOtherNotif("Incoming call", `${channel.name} is calling you...`);
             }

@@ -102,14 +102,14 @@ interface ProfileModalProps {
 const ProfileModal = findComponentByCodeLazy<ProfileModalProps>("isTryItOut:", "pendingThemeColors:", "pendingAvatarDecoration:", "EDIT_PROFILE_BANNER");
 
 function SettingsAboutComponentWrapper() {
-    const [, , userProfileLoading] = useAwaiter(() => fetchUserProfile(UserStore.getCurrentUser().id));
+    const [, , userProfileLoading] = useAwaiter(() => fetchUserProfile(UserStore.getCurrentUser()?.id));
 
     return !userProfileLoading && <SettingsAboutComponent />;
 }
 
 function SettingsAboutComponent() {
     const existingColors = decode(
-        UserProfileStore.getUserProfile(UserStore.getCurrentUser().id)?.bio ?? ""
+        UserProfileStore.getUserProfile(UserStore.getCurrentUser()?.id)?.bio ?? ""
     ) ?? [0, 0];
     const [color1, setColor1] = useState(existingColors[0]);
     const [color2, setColor2] = useState(existingColors[1]);

@@ -135,7 +135,7 @@ function jumpIfOffScreen(channelId: string, messageId: string) {
 function getNextMessage(isUp: boolean, isReply: boolean) {
     let messages: Message[] = MessageStore.getMessages(SelectedChannelStore.getChannelId())._array;
 
-    const meId = UserStore.getCurrentUser().id;
+    const meId = UserStore.getCurrentUser()?.id;
     const hasNoBlockedMessages = isPluginEnabled(NoBlockedMessagesPlugin.name);
 
     messages = messages.filter(m => {
@@ -196,7 +196,7 @@ function nextReply(isUp: boolean) {
     }
 
     const channel = ChannelStore.getChannel(message.channel_id);
-    const meId = UserStore.getCurrentUser().id;
+    const meId = UserStore.getCurrentUser()?.id;
 
     Dispatcher.dispatch({
         type: "CREATE_PENDING_REPLY",

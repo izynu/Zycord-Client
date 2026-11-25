@@ -170,7 +170,7 @@ export default definePlugin({
         VOICE_STATE_UPDATES({ voiceStates }: { voiceStates: VoiceStateChangeEvent[]; }) {
             const myGuildId = SelectedGuildStore.getGuildId();
             const myChanId = SelectedChannelStore.getVoiceChannelId();
-            const myId = UserStore.getCurrentUser().id;
+            const myId = UserStore.getCurrentUser()?.id;
 
             if (ChannelStore.getChannel(myChanId!)?.type === 13 /* Stage Channel */) return;
 

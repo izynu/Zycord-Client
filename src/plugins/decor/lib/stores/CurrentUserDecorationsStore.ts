@@ -50,7 +50,7 @@ export const useCurrentUserDecorationsStore = proxyLazy(() => zustandCreate((set
         if (get().selectedDecoration === decoration) return;
         set({ selectedDecoration: decoration });
         setUserDecoration(decoration);
-        useUsersDecorationsStore.getState().set(UserStore.getCurrentUser().id, decoration ? decorationToAsset(decoration) : null);
+        useUsersDecorationsStore.getState().set(UserStore.getCurrentUser()?.id, decoration ? decorationToAsset(decoration) : null);
     },
     clear: () => set({ decorations: [], selectedDecoration: null })
 } as UserDecorationsState)));

@@ -124,7 +124,7 @@ export default definePlugin({
         CONNECTION_OPEN: () => {
             useAuthorizationStore.getState().init();
             useCurrentUserDecorationsStore.getState().clear();
-            useUsersDecorationsStore.getState().fetch(UserStore.getCurrentUser().id, true);
+            useUsersDecorationsStore.getState().fetch(UserStore.getCurrentUser()?.id, true);
         },
         USER_PROFILE_MODAL_OPEN: data => {
             useUsersDecorationsStore.getState().fetch(data.userId, true);
@@ -149,7 +149,7 @@ export default definePlugin({
     useUserDecorAvatarDecoration,
 
     async start() {
-        useUsersDecorationsStore.getState().fetch(UserStore.getCurrentUser().id, true);
+        useUsersDecorationsStore.getState().fetch(UserStore.getCurrentUser()?.id, true);
     },
 
     getDecorAvatarDecorationURL({ avatarDecoration, canAnimate }: { avatarDecoration: AvatarDecoration | null; canAnimate?: boolean; }) {
