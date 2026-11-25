@@ -38,6 +38,7 @@ import { relaunch } from "@utils/native";
 import { promptToRestart } from "@utils/promptToRestart";
 import { UserStore } from "@webpack/common";
 
+import { InterfaceZoomSettings } from "./InterfaceZoomSettings";
 import { MacOSVibrancySettings } from "./MacVibrancySettings";
 import { NotificationSection } from "./NotificationSettings";
 import { openPlayground } from "./playground";
@@ -235,6 +236,8 @@ function VencordSettings() {
                 </div>
             </section>
 
+
+            <InterfaceZoomSettings />
 
             <MacOSVibrancySettings />
             <WindowsMaterialSettings />
