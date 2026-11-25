@@ -160,7 +160,7 @@ function scheduleHide() {
 }
 
 function onMouseOver(e: MouseEvent) {
-    const target = e.target;
+    const { target } = e;
     if (!(target instanceof Element)) return;
 
     if (target === button || target.closest(".vc-media-speed-btn")) {
