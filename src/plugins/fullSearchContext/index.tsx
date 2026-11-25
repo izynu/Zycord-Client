@@ -38,7 +38,7 @@ waitFor(filters.componentByCode('"cannot copy null text"'), m => CopyIdMenuItem 
 
 function MessageMenu({ message, channel, onHeightUpdate }) {
     const canReport = message.author &&
-        !(message.author.id === UserStore.getCurrentUser().id || message.author.system);
+        !(message.author.id === UserStore.getCurrentUser()?.id || message.author.system);
 
     return useMessageMenu({
         navId: "message-actions",

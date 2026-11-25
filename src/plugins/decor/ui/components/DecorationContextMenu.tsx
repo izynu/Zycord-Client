@@ -27,7 +27,7 @@ export default function DecorationContextMenu({ decoration }: { decoration: Deco
             leadingAccessory={{ type: "icon", icon: CopyIcon }}
             action={() => copyToClipboard(decoration.hash)}
         />
-        {decoration.authorId === UserStore.getCurrentUser().id &&
+        {decoration.authorId === UserStore.getCurrentUser()?.id &&
             <Menu.MenuItem
                 id={cl("decoration-context-menu-delete")}
                 label="Delete Decoration"

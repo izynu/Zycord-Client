@@ -5,16 +5,24 @@
  */
 
 import { app, ipcMain, shell } from "electron";
+import { join } from "path";
 
 import { APP_ID, APP_NAME, discordUrl } from "./constants";
 import { registerZycordIpc, ZycordIpc } from "./ipc";
 import { buildMenu, configureSession, createMainWindow, getMainWindow } from "./window";
 
-// The Zycord data directory mirrors what the Vencord main bundle expects.
-process.env.VENCORD_USER_DATA_DIR ??= `${app.getPath("userData")}`;
-process.env.DATA_DIR = process.env.VENCORD_USER_DATA_DIR;
-
+// setName must happen before any getPath call: Electron resolves userData lazily
+// and caches it, so setting the name afterwards leaves the app writing to
+// %APPDATA%\Electron instead of %APPDATA%\Zycord.
 app.setName(APP_NAME);
+
+// The Zycord data directory mirrors what the Vencord main bundle expects.
+// Pin it explicitly so a stale folder from another build cannot shadow it.
+const userData = join(app.getPath("appData"), APP_NAME);
+app.setPath("userData", userData);
+process.env.VENCORD_USER_DATA_DIR = userData;
+process.env.DATA_DIR = userData;
+
 if (process.platform === "win32") app.setAppUserModelId(APP_ID);
 
 if (!app.requestSingleInstanceLock()) {

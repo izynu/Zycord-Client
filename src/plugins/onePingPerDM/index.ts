@@ -60,7 +60,7 @@ export default definePlugin({
             (channelType !== ChannelType.DM && channelType !== ChannelType.GROUP_DM) ||
             (channelType === ChannelType.DM && settings.store.channelToAffect === "group_dm") ||
             (channelType === ChannelType.GROUP_DM && settings.store.channelToAffect === "user_dm") ||
-            (settings.store.allowMentions && message.mentions.some(m => m.id === UserStore.getCurrentUser().id)) ||
+            (settings.store.allowMentions && message.mentions.some(m => m.id === UserStore.getCurrentUser()?.id)) ||
             (settings.store.allowEveryone && message.mention_everyone)
         ) {
             return true;

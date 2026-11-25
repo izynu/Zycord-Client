@@ -93,7 +93,7 @@ export default function ReviewsView({
                     name={name}
                     discordId={discordId}
                     refetch={refetch}
-                    isAuthor={reviewData!.reviews?.some(r => r.sender.discordID === UserStore.getCurrentUser().id)}
+                    isAuthor={reviewData!.reviews?.some(r => r.sender.discordID === UserStore.getCurrentUser()?.id)}
                 />
             )}
         </>
@@ -101,7 +101,7 @@ export default function ReviewsView({
 }
 
 function ReviewList({ refetch, reviews, hideOwnReview, profileId, type }: { refetch(): void; reviews: Review[]; hideOwnReview: boolean; profileId: string; type: ReviewType; }) {
-    const myId = UserStore.getCurrentUser().id;
+    const myId = UserStore.getCurrentUser()?.id;
 
     return (
         <div className={cl("view")}>

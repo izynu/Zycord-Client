@@ -13,6 +13,9 @@ const ZycordNative = {
         getVersion: () => ipcRenderer.sendSync(ZycordIpc.GET_VERSION) as string,
         relaunch: () => ipcRenderer.invoke(ZycordIpc.RELAUNCH),
         openExternal: (url: string) => ipcRenderer.invoke(ZycordIpc.OPEN_EXTERNAL, url)
+    },
+    zoom: {
+        set: (level: number) => ipcRenderer.invoke(ZycordIpc.SET_ZOOM, level)
     }
 };
 

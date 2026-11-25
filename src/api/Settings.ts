@@ -35,6 +35,7 @@ const logger = new Logger("Settings");
  * off in Settings > Plugins, and only applies when the user has no saved value.
  */
 export const ZYCORD_DEFAULT_PLUGINS = [
+    "ZycordDesktop",
     // Appearance / information density
     "ShowHiddenChannels",
     "ShowHiddenThings",
