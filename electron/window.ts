@@ -80,6 +80,14 @@ export function createMainWindow() {
     mainWin.webContents.session.setUserAgent(BrowserUserAgent);
     mainWin.webContents.setUserAgent(BrowserUserAgent);
 
+    // Discord sets document.title to things like "Discord | Friends", which
+    // Electron then shows in the native title bar. Keeping our own name is what
+    // makes the window read as Zycord rather than a Discord web page.
+    mainWin.on("page-title-updated", e => {
+        e.preventDefault();
+        if (mainWin && !mainWin.isDestroyed()) mainWin.setTitle("Zycord");
+    });
+
     // Avoid the white flash while Discord's first paint is pending.
     mainWin.once("ready-to-show", () => mainWin?.show());
 
