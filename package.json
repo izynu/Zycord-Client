@@ -16,11 +16,11 @@
     },
     "scripts": {
         "build": "pnpm build:core && pnpm build:shell",
-        "build:core": "node --require=./scripts/suppressExperimentalWarnings.js scripts/build/build.mjs",
+        "build:core": "node --require=./scripts/suppressExperimentalWarnings.js scripts/build/build.mjs --standalone --disable-updater",
         "build:shell": "node scripts/build/shell.mjs",
         "buildStandalone": "pnpm build:core --standalone",
-        "watch": "pnpm build:core --watch",
-        "dev": "pnpm build:core --watch",
+        "watch": "node --require=./scripts/suppressExperimentalWarnings.js scripts/build/build.mjs --watch --dev",
+        "dev": "pnpm watch",
         "start": "electron .",
         "generatePluginJson": "tsx scripts/generatePluginList.ts",
         "generateTypes": "tspc --emitDeclarationOnly --declaration --outDir packages/vencord-types --allowJs false",
@@ -33,7 +33,8 @@
         "test:ts": "tsc --noEmit",
         "bump": "./scripts/bump.sh",
         "dist": "pnpm build && electron-builder --win nsis --x64",
-        "dist:dir": "pnpm build && electron-builder --win dir --x64"
+        "dist:dir": "pnpm build && electron-builder --win dir --x64",
+        "build:dev": "node --require=./scripts/suppressExperimentalWarnings.js scripts/build/build.mjs --dev"
     },
     "dependencies": {
         "@intrnl/xxhash64": "catalog:",
