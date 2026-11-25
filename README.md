@@ -134,7 +134,8 @@ Thank you to both projects and their contributors.
 
 **Zynu**
 
-- GitHub: [@SahilVerlice](https://github.com/SahilVerlice)
+- GitHub: [@izynu](https://github.com/izynu)
+- Discord: `@izynu`
 - YouTube: [@izynu](https://youtube.com/@izynu)
 - Website: [zynu.me](https://zynu.me)
 
