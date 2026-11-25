@@ -43,6 +43,7 @@ import { MacOSVibrancySettings } from "./MacVibrancySettings";
 import { NotificationSection } from "./NotificationSettings";
 import { openPlayground } from "./playground";
 import { WindowsMaterialSettings } from "./WindowsMaterialSettings";
+import { ZycordToggles } from "./ZycordToggles";
 
 const COZY_CONTRIB_IMAGE = "https://cdn.discordapp.com/emojis/1026533070955872337.png";
 const CONTRIB_BACKGROUND_IMAGE = "https://media.discordapp.net/stickers/1311070166481895484.png?size=2048";
@@ -238,6 +239,8 @@ function VencordSettings() {
 
 
             <InterfaceZoomSettings />
+
+            <ZycordToggles />
 
             <MacOSVibrancySettings />
             <WindowsMaterialSettings />
