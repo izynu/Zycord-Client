@@ -36,6 +36,7 @@ const logger = new Logger("Settings");
  */
 export const ZYCORD_DEFAULT_PLUGINS = [
     "ZycordDesktop",
+    "SplitLargeMessages",
     // Appearance / information density
     "ShowHiddenChannels",
     "ShowHiddenThings",
@@ -110,6 +111,10 @@ export const ZYCORD_DEFAULT_PLUGINS = [
     "Experiments",
     "PauseInvitesForever",
     "FakeNitro",
+    "FakeProfileThemes",
+    "ClientTheme",
+    "ThemeAttributes",
+    "AlwaysAnimate",
     // Desktop integration
     "DirectFileDownload",
     "WebContextMenus",
