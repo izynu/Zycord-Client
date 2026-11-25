@@ -230,6 +230,11 @@ export default definePlugin({
                 {
                     match: /canUsePremiumAppIcons:/,
                     replace: "$&()=>true,_$&"
+                },
+                {
+                    // Gates profile custom colours (accent/theme) in the profile editor.
+                    match: /canUsePremiumProfileCustomization:/,
+                    replace: "$&()=>true,_$&"
                 }
             ],
         },
