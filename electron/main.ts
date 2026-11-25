@@ -9,6 +9,7 @@ import { join } from "path";
 
 import { APP_ID, APP_NAME, discordUrl } from "./constants";
 import { registerZycordIpc, ZycordIpc } from "./ipc";
+import { destroyTray, getTray, initTray, markQuitting } from "./tray";
 import { buildMenu, configureSession, createMainWindow, getMainWindow } from "./window";
 
 // setName must happen before any getPath call: Electron resolves userData lazily
@@ -61,11 +62,26 @@ if (!app.requestSingleInstanceLock()) {
 
         configureSession();
         buildMenu();
-        createMainWindow();
+        const win = createMainWindow();
+        // After the window: initTray binds visibility listeners to it. Failure
+        // here must not cost the user their client, hence the catch.
+        try {
+            initTray(win);
+        } catch (err) {
+            console.error("[Zycord] Failed to create tray icon:", err);
+        }
     });
 
+    app.on("before-quit", () => {
+        markQuitting();
+        destroyTray();
+    });
+
+    // The window normally hides rather than closes, so this only fires if it was
+    // genuinely destroyed. With a tray alive the user can reopen it from there;
+    // without one, leaving a headless process would strand the app.
     app.on("window-all-closed", () => {
-        if (process.platform !== "darwin") app.quit();
+        if (process.platform !== "darwin" && !getTray()) app.quit();
     });
 
     app.on("activate", () => {
@@ -75,3 +91,6 @@ if (!app.requestSingleInstanceLock()) {
 }
 
 export { discordUrl };
+// Tray state is re-exported so the bundling test harness can assert on the live
+// instance without reaching into module internals.
+export { destroyTray, getTray, getTrayIcon, getTrayMenu, isQuitting, markQuitting } from "./tray";
