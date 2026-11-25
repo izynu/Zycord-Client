@@ -22,9 +22,9 @@ import { Heart } from "@components/Heart";
 export default function DonateButton({ variant, ...props }: Omit<ButtonProps, "children" | "onClick" | "className">) {
     const commonProps = {
         ...props,
-        onClick: () => VencordNative.native.openExternal("https://github.com/sponsors/Vendicated"),
+        onClick: () => VencordNative.native.openExternal("https://zynu.me"),
         className: "vc-donate-button",
-        children: <><Heart />Donate</>
+        children: <><Heart />Support Zycord</>
     };
 
     return variant

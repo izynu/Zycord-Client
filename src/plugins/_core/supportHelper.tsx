@@ -84,7 +84,7 @@ async function generateDebugInfoMessage() {
 
     const info = {
         Zycord:
-            `v${VERSION} • [${gitHash}](<https://github.com/Vendicated/Vencord/commit/${gitHash}>)` +
+            `v${VERSION} • [${gitHash}](<https://github.com/SahilVerlice/Zycord/commit/${gitHash}>)` +
             `${SettingsPlugin.additionalInfo} - ${Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(BUILD_TIMESTAMP)}`,
         Client: `${RELEASE_CHANNEL} ~ ${client}`,
         Platform: navigator.platform
@@ -152,8 +152,8 @@ function DevBuildConfirmModal(props: RenderModalProps) {
                 <Paragraph>You are using a custom build of Zycord, which we do not provide support for!</Paragraph>
 
                 <Paragraph className={Margins.top8}>
-                    We only provide support for <Link href="https://vencord.dev/download">official builds</Link>.
-                    Either <Link href="https://vencord.dev/download">switch to an official build</Link> or figure your issue out yourself.
+                    We only provide support for <Link href="https://github.com/SahilVerlice/Zycord">official builds</Link>.
+                    Either <Link href="https://github.com/SahilVerlice/Zycord">switch to an official build</Link> or figure your issue out yourself.
                 </Paragraph>
 
                 <Paragraph size="md" weight="bold" className={Margins.top8}>You will be banned from receiving support if you ignore this rule.</Paragraph>
@@ -245,7 +245,7 @@ export default definePlugin({
                         <div>
                             <Paragraph>You are using an externally updated Zycord version, which we do not provide support for!</Paragraph>
                             <Paragraph className={Margins.top8}>
-                                Please either switch to an <Link href="https://vencord.dev/download">officially supported version of Zycord</Link>, or
+                                Please either switch to an <Link href="https://github.com/SahilVerlice/Zycord">officially supported version of Zycord</Link>, or
                                 contact your package maintainer for support instead.
                             </Paragraph>
                         </div>

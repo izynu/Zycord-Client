@@ -21,7 +21,8 @@ import { useSettings } from "@api/Settings";
 import { Divider } from "@components/Divider";
 import { FormSwitch } from "@components/FormSwitch";
 import { Heading } from "@components/Heading";
-import { FolderIcon, GithubIcon, LogIcon, PaintbrushIcon, RestartIcon } from "@components/Icons";
+import { FolderIcon, GithubIcon, LogIcon, PaintbrushIcon, RestartIcon, WebsiteIcon } from "@components/Icons";
+import { Link } from "@components/Link";
 import { Paragraph } from "@components/Paragraph";
 import { QuickAction, QuickActionCard } from "@components/settings/QuickAction";
 import { SpecialCard } from "@components/settings/SpecialCard";
@@ -30,25 +31,19 @@ import { openContributorModal } from "@components/settings/tabs/plugins/Contribu
 import { openPluginModal } from "@components/settings/tabs/plugins/PluginModal";
 import NoTrack from "@plugins/_core/noTrack";
 import SettingsPlugin from "@plugins/_core/settings";
-import { gitRemote } from "@shared/vencordUserAgent";
 import { IS_WINDOWS } from "@utils/constants";
 import { Margins } from "@utils/margins";
 import { isPluginDev } from "@utils/misc";
 import { relaunch } from "@utils/native";
 import { promptToRestart } from "@utils/promptToRestart";
-import { React, useMemo, UserStore } from "@webpack/common";
+import { UserStore } from "@webpack/common";
 
-import { DonateButtonComponent, isDonor } from "./DonateButton";
 import { MacOSVibrancySettings } from "./MacVibrancySettings";
 import { NotificationSection } from "./NotificationSettings";
 import { openPlayground } from "./playground";
 import { WindowsMaterialSettings } from "./WindowsMaterialSettings";
 
-const DEFAULT_DONATE_IMAGE = "https://cdn.discordapp.com/emojis/1026533090627174460.png";
-const SHIGGY_DONATE_IMAGE = "https://media.discordapp.net/stickers/1039992459209490513.png";
-const VENNIE_DONATOR_IMAGE = "https://cdn.discordapp.com/emojis/1238120638020063377.png";
 const COZY_CONTRIB_IMAGE = "https://cdn.discordapp.com/emojis/1026533070955872337.png";
-const DONOR_BACKGROUND_IMAGE = "https://media.discordapp.net/stickers/1311070116305436712.png?size=2048";
 const CONTRIB_BACKGROUND_IMAGE = "https://media.discordapp.net/stickers/1311070166481895484.png?size=2048";
 
 type KeysOfType<Object, Type> = {
@@ -141,40 +136,24 @@ function Switches() {
 }
 
 function VencordSettings() {
-    const donateImage = useMemo(() =>
-        Math.random() > 0.5 ? DEFAULT_DONATE_IMAGE : SHIGGY_DONATE_IMAGE,
-        []
-    );
-
     const user = UserStore?.getCurrentUser();
 
     return (
         <SettingsTab>
-            {isDonor(user?.id)
-                ? (
-                    <SpecialCard
-                        title="Donations"
-                        subtitle="Thank you for donating!"
-                        description="You can manage your perks at any time by messaging @vending.machine."
-                        cardImage={VENNIE_DONATOR_IMAGE}
-                        backgroundImage={DONOR_BACKGROUND_IMAGE}
-                        backgroundColor="#ED87A9"
-                    >
-                        <DonateButtonComponent />
-                    </SpecialCard>
-                )
-                : (
-                    <SpecialCard
-                        title="Support the Project"
-                        description="Please consider supporting the development of Zycord by donating!"
-                        cardImage={donateImage}
-                        backgroundImage={DONOR_BACKGROUND_IMAGE}
-                        backgroundColor="#c3a3ce"
-                    >
-                        <DonateButtonComponent />
-                    </SpecialCard>
-                )
-            }
+            <SpecialCard
+                title="Zycord"
+                subtitle="Made by Zynu"
+                description="Support Zycord and follow development at zynu.me. You can also find Zynu on GitHub, Discord and YouTube as @izynu."
+                backgroundImage={CONTRIB_BACKGROUND_IMAGE}
+                backgroundColor="#c3a3ce"
+            >
+                <Paragraph className={Margins.top8} style={{ color: "var(--text-muted)" }}>
+                    <Link href="https://zynu.me">Website</Link>
+                    {" • "}
+                    <Link href="https://github.com/izynu">GitHub</Link>
+                    {" • Discord: @izynu • YouTube: @izynu"}
+                </Paragraph>
+            </SpecialCard>
 
             {isPluginDev(user?.id) && (
                 <SpecialCard
@@ -220,7 +199,17 @@ function VencordSettings() {
                     <QuickAction
                         Icon={GithubIcon}
                         text="View Source Code"
-                        action={() => VencordNative.native.openExternal("https://github.com/" + gitRemote)}
+                        action={() => VencordNative.native.openExternal("https://github.com/SahilVerlice/Zycord")}
+                    />
+                    <QuickAction
+                        Icon={WebsiteIcon}
+                        text="Zynu's Website"
+                        action={() => VencordNative.native.openExternal("https://zynu.me")}
+                    />
+                    <QuickAction
+                        Icon={GithubIcon}
+                        text="Developer on GitHub"
+                        action={() => VencordNative.native.openExternal("https://github.com/izynu")}
                     />
                     {IS_DEV && <QuickAction
                         Icon={PaintbrushIcon}

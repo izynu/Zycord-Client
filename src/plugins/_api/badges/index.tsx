@@ -277,7 +277,7 @@ export default definePlugin({
                     openModal(props => (
                         <ErrorBoundary noop onError={() => {
                             props.onClose();
-                            VencordNative.native.openExternal("https://github.com/sponsors/Vendicated");
+                            VencordNative.native.openExternal("https://zynu.me");
                         }}>
                             <Modal
                                 {...props}
