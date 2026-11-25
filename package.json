@@ -92,10 +92,19 @@
         },
         "files": [
             "dist/js/**/*",
+            {
+                "from": "dist",
+                "to": "dist/js",
+                "filter": [
+                    "vencordDesktopMain.js.LEGAL.txt",
+                    "vencordDesktopRenderer.js.LEGAL.txt"
+                ]
+            },
             "package.json",
             "LICENSE",
             "NOTICE",
-            "README.md"
+            "README.md",
+            "!node_modules/**"
         ],
         "win": {
             "target": [
