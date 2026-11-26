@@ -3,16 +3,16 @@
     "version": "1.0.0",
     "private": "true",
     "description": "Zycord Client \u2014 a Discord client. By Zynu.",
-    "homepage": "https://github.com/SahilVerlice/Zycord#readme",
+    "homepage": "https://izynu.github.io/Zycord-Client/",
     "bugs": {
-        "url": "https://github.com/SahilVerlice/Zycord/issues"
+        "url": "https://github.com/izynu/Zycord-Client/issues"
     },
     "license": "GPL-3.0-or-later",
     "author": "Zynu",
     "main": "dist/js/main.js",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/SahilVerlice/Zycord.git"
+        "url": "git+https://github.com/izynu/Zycord-Client.git"
     },
     "scripts": {
         "build": "pnpm build:core && pnpm build:shell",
