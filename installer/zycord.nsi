@@ -16,6 +16,9 @@ ManifestDPIAware true
 !include "nsDialogs.nsh"
 !include "FileFunc.nsh"
 
+!insertmacro GetSize
+
+
 ; INetC is not part of every NSIS distribution; it is staged beside this file.
 !addplugindir "plugins"
 
@@ -28,6 +31,9 @@ ManifestDPIAware true
 !endif
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\Zycord"
 !define PAYLOAD_DIR "payload"
+!ifndef PAYLOAD_SIZE
+!error PAYLOAD_SIZE must be defined by the build
+!endif
 
 Var Channel
 
@@ -156,6 +162,24 @@ FunctionEnd
     Call PatchChannel
 !macroend
 
+; An existing _app.asar is normally the real Discord client. If it is exactly the
+; size of the patch we ship, it is a second copy of the patch: a previous
+; install threw away the original. Patching on top of that would leave a client
+; that loads Zycord twice and crashes on duplicate IPC handlers, so it is
+; refused and reported instead. ${PAYLOAD_SIZE} is supplied by the build.
+Function IsNestedPatch
+    Exch $R8
+    StrCpy $1 "no"
+
+    ${GetSize} "$R8" "/S=0K" $R7 $R5 $R6
+
+    ${If} $R7 == ${PAYLOAD_SIZE}
+        StrCpy $1 "yes"
+    ${EndIf}
+
+    Exch $R8
+FunctionEnd
+
 ; Backs up app.asar and writes the patch for every build under $Root.
 ; The payload is extracted once by the section into $TEMP\ZycordPatch, so the
 ; copy here is a plain file copy that works inside a runtime loop.
@@ -179,6 +203,17 @@ Function PatchChannel
         ; Discord holds the asar open while it runs; a failed rename here is the
         ; most common reason a patch silently does nothing.
         ${IfNot} ${FileExists} "$R9\_app.asar"
+            ; Never back up a Zycord patch as if it were Discord. Doing so throws
+            ; away the only copy of the original client and leaves a patch that
+            ; loads itself recursively and crashes.
+            Push "$R9\app.asar"
+            Call IsNestedPatch
+            Pop $1
+            ${If} $1 == "yes"
+                DetailPrint "Refused: $R9\app.asar is already a Zycord patch, not Discord. Left alone."
+                Goto pnext
+            ${EndIf}
+
             ClearErrors
             Rename "$R9\app.asar" "$R9\_app.asar"
             ${If} ${Errors}
@@ -186,6 +221,16 @@ Function PatchChannel
                 Goto pnext
             ${EndIf}
             DetailPrint "Backed up the original at $R9\_app.asar"
+        ${EndIf}
+
+        ; Belt and braces: a backup that is really a patch means the original is
+        ; gone, and installing anyway would produce a client that crashes.
+        Push "$R9\_app.asar"
+        Call IsNestedPatch
+        Pop $1
+        ${If} $1 == "yes"
+            DetailPrint "Refused: $R9\_app.asar is a Zycord patch, not the Discord client. Reinstall Discord."
+            Goto pnext
         ${EndIf}
 
         ClearErrors

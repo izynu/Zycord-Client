@@ -259,6 +259,14 @@ try {
         }
     });
 
+    check("the patch refuses to load on top of another patch", () => {
+        // If _app.asar is itself a Zycord patch, the patcher would start twice in
+        // one process and throw "Attempted to register a second handler".
+        const bundle = readFileSync(join(ROOT, "dist", "patcher", "patcher.js"), "utf8");
+        assert.match(bundle, /cannot start/, "the recursion guard must be compiled in");
+        assert.match(bundle, /patcher\.js/, "the guard must look for a patch marker");
+    });
+
     check("the scratch staging directory is cleaned up", () => {
         assert.ok(!existsSync(join(ROOT, "dist", ".zycord-inject")));
     });

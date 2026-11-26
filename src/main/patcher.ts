@@ -17,7 +17,8 @@
 */
 
 import { onceDefined } from "@shared/onceDefined";
-import electron, { app, BrowserWindowConstructorOptions, Menu } from "electron";
+import electron, { app, BrowserWindowConstructorOptions, dialog, Menu } from "electron";
+import { existsSync } from "fs";
 import { dirname, join } from "path";
 
 import { RendererSettings } from "./settings";
@@ -35,6 +36,22 @@ const asarName = require.main!.path.endsWith("app.asar") ? "_app.asar" : "app.as
 const asarPath = join(dirname(injectorPath), "..", asarName);
 
 const discordPkg = require(join(asarPath, "package.json"));
+
+// If the backup is itself a Zycord patch, the original client was replaced
+// before it could be saved. Loading it would start this patcher a second time
+// in the same process, and every IPC handler it registers would throw on the
+// duplicate. Refuse to go any further and tell the user how to recover.
+if (existsSync(join(asarPath, "patcher.js"))) {
+    dialog.showErrorBox(
+        "Zycord cannot start",
+        "The original Discord files were replaced by a previous Zycord install, "
+        + "so there is nothing to hand control back to.\n\n"
+        + "Reinstall Discord from discord.com, then run the Zycord installer again."
+    );
+    app.exit(1);
+    throw new Error("Original app.asar is a Zycord patch");
+}
+
 require.main!.filename = join(asarPath, discordPkg.main);
 
 // @ts-expect-error Untyped method? Dies from cringe

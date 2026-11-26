@@ -13,7 +13,7 @@
  */
 
 import { execFileSync } from "child_process";
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "fs";
 import { createRequire } from "module";
 import { homedir } from "os";
 import { dirname, join } from "path";
@@ -95,7 +95,8 @@ async function main() {
     }
 
     console.log(`Building the Zycord ${version} installer...`);
-    execFileSync("makensis", [join(INSTALLER_DIR, "zycord.nsi")],
+    const size = statSync(join(PAYLOAD, "app.asar")).size;
+    execFileSync("makensis", [`-DPAYLOAD_SIZE=${size}`, join(INSTALLER_DIR, "zycord.nsi")],
         { stdio: "inherit", cwd: INSTALLER_DIR, env: { ...process.env } });
 
     const exe = join(RELEASE, `Zycord-Patcher-Setup-${version}.exe`);
