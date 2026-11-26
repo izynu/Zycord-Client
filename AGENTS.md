@@ -7,7 +7,7 @@ Zycord Client is a standalone Electron desktop client for Windows. It loads Disc
 - `electron/` the desktop shell: window, tray, preload, IPC
 - `src/` the renderer and plugin system
 - `scripts/build/` esbuild pipelines for the renderer bundles and the shell
-- `site/` the published website
+- `docs/` the published website
 
 ## Tooling
 
