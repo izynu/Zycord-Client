@@ -39,7 +39,7 @@
 
 Zycord Client is a desktop application for Windows. It opens Discord's web client in its own window and adds a plugin layer on top: 173 plugins, a theme engine, interface zoom from 50 to 200 percent, a settings panel, and a tray icon.
 
-It installs to its own directory and runs as a separate program. The official Discord application is never modified, and both can be installed side by side.
+It installs to its own directory and runs as a separate program. Installing it leaves the official Discord application alone, and both can be installed side by side.
 
 
 ---
