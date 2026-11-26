@@ -18,7 +18,7 @@
 
 import "./styles.css";
 
-import { definePluginSettings } from "@api/Settings";
+import { definePluginSettings, migratePluginSettings } from "@api/Settings";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Devs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
@@ -77,8 +77,10 @@ function VencordPopoutButton() {
     );
 }
 
+migratePluginSettings("ZycordToolbox", "VencordToolbox");
+
 export default definePlugin({
-    name: "VencordToolbox",
+    name: "ZycordToolbox",
     description: "Adds a button to the titlebar that houses Zycord quick actions",
     tags: ["Utility", "Developers"],
     authors: [Devs.Ven, Devs.AutumnVN],
