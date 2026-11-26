@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Zycord Client, a Discord client for Windows</title>
-<meta name="description" content="Zycord Client is a standalone Electron app for Windows 10 and 11 that runs Discord's web app in its own window with 87 plugins enabled by default.">
+<meta name="description" content="Zycord installs into the Discord desktop app on Windows and adds 87 plugins out of 173 by default, a theme engine and interface zoom, without a second client.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -41,15 +41,15 @@
   <section class="hero wrap" id="download">
     <div class="hero-copy">
       <p class="eyebrow">Windows desktop client</p>
-      <h1>A Discord window with 87 plugins already on.</h1>
+      <h1>Your Discord, with 87 plugins already on.</h1>
       <p class="lead">
-        Zycord Client is a standalone Electron app for Windows 10 and 11. It opens
-        Discord's web app in its own window and adds a plugin system with 87
-        plugins enabled by default, out of 173 in the codebase. It does not touch
-        the official Discord installation, and both can be installed side by side.
+        Zycord installs into the Discord desktop app for Windows 10 and 11. It
+        replaces the file Discord loads at startup, adds a plugin system with 87
+        plugins enabled by default out of 173, then hands control back to Discord.
+        You keep launching Discord exactly as before.
       </p>
       <div class="cta">
-        <a class="btn" href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Client-Setup-1.0.0-x64.exe">
+        <a class="btn" href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Patcher-Setup-1.0.0.exe">
           Download for Windows
           <svg class="btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -57,7 +57,7 @@
         </a>
         <a class="btn btn-ghost" href="https://github.com/izynu/Zycord-Client">View source</a>
       </div>
-      <p class="file-meta">Zycord-Client-Setup-1.0.0-x64.exe &middot; 97.7 MB &middot; Windows 10/11 x64</p>
+      <p class="file-meta">Zycord-Patcher-Setup-1.0.0.exe &middot; 530 KB &middot; Windows 10/11 x64 &middot; needs Discord</p>
       <p class="fine">
         Open source under GPL-3.0-or-later. The build is unsigned, so Windows
         SmartScreen will warn before it runs.
@@ -128,7 +128,7 @@
           <span class="tick" aria-hidden="true"></span>
           <div>
             <h3>Not a patch for the official app</h3>
-            <p>It installs on its own and runs Discord's web app in its own window. The official Discord installation is left untouched.</p>
+            <p>It installs into the Discord you already have. No second window, no second login, and a backup of the original file so uninstalling puts Discord back.</p>
           </div>
         </li>
         <li>
@@ -158,7 +158,7 @@
       <li class="glass">
         <span class="step-num" aria-hidden="true">1</span>
         <h3>Run the installer</h3>
-        <p>Download Zycord-Client-Setup-1.0.0-x64.exe and run it. The installer writes to a folder you pick for your user account.</p>
+        <p>Download Zycord-Patcher-Setup-1.0.0.exe, close Discord, and run it. Choose Install. The installer patches Discord in place and keeps a backup of the original file.</p>
       </li>
       <li class="glass">
         <span class="step-num" aria-hidden="true">2</span>

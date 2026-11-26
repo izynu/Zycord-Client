@@ -3,3 +3,6 @@
 *.log
 
 /release
+/installer/payload
+/installer/.stage
+/installer/.app.asar

@@ -89,7 +89,9 @@ try {
 
     check("patched asar is a self-contained injector", () => {
         const entries = asar.listPackage(target);
-        assert.deepEqual(entries.sort(), ["/index.js", "/package.json", "/patcher.js"]);
+        for (const required of ["/index.js", "/package.json", "/patcher.js", "/preload.js", "/renderer.js", "/renderer.css"]) {
+            assert.ok(entries.includes(required), `${required} missing from the patch`);
+        }
 
         const index = asar.extractFile(target, "index.js").toString();
         assert.match(index, /patcher\.js/);
@@ -143,6 +145,45 @@ try {
 
     check("a missing installation is reported, not guessed", () => {
         assert.match(runFails(join(sandbox, "empty"), "install"), /No Discord installation/);
+    });
+
+    check("the patched asar ships every runtime asset", () => {
+        run(appData, "install", "--force");
+        const entries = asar.listPackage(target).map(e => e.replace(/^\//, ""));
+        for (const asset of ["patcher.js", "preload.js", "renderer.js", "renderer.css"]) {
+            assert.ok(entries.includes(asset), `${asset} missing from the patch`);
+        }
+    });
+
+    check("repair rewrites the patch and keeps the backup", () => {
+        const out = run(appData, "repair");
+        assert.match(out, /rewritten/);
+        assert.equal(readFileSync(backup, "utf8"), "ORIGINAL:Discord:1.0.9100");
+    });
+
+    check("update applies over an existing patch", () => {
+        const out = run(appData, "update");
+        assert.match(out, /patched/);
+        assert.equal(readFileSync(backup, "utf8"), "ORIGINAL:Discord:1.0.9100");
+    });
+
+    check("install writes an install state file", () => {
+        const state = JSON.parse(readFileSync(join(appData, "Discord", "zycord-patch.json"), "utf8"));
+        assert.equal(state.product, "Zycord");
+        assert.equal(state.branch, "stable");
+    });
+
+    check("purge restores Discord and removes Zycord state", () => {
+        const dataDir = join(appData, "Zycord");
+        mkdirSync(join(dataDir, "settings"), { recursive: true });
+        writeFileSync(join(dataDir, "settings", "settings.json"), "{}");
+
+        run(appData, "purge");
+
+        assert.equal(readFileSync(target, "utf8"), "ORIGINAL:Discord:1.0.9100");
+        assert.ok(!existsSync(backup), "backup should be consumed");
+        assert.ok(!existsSync(join(appData, "Discord", "zycord-patch.json")), "state file should be gone");
+        assert.ok(!existsSync(dataDir), "data directory should be gone");
     });
 
     check("the scratch staging directory is cleaned up", () => {

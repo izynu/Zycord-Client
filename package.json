@@ -15,8 +15,9 @@
         "url": "git+https://github.com/izynu/Zycord-Client.git"
     },
     "scripts": {
-        "build": "pnpm build:core && pnpm build:shell",
+        "build": "pnpm build:core && pnpm build:patcher && pnpm build:shell",
         "build:core": "node --require=./scripts/suppressExperimentalWarnings.js scripts/build/build.mjs --standalone --disable-updater",
+        "build:patcher": "node --require=./scripts/suppressExperimentalWarnings.js scripts/build/build.mjs --patcher",
         "build:shell": "node scripts/build/shell.mjs",
         "buildStandalone": "pnpm build:core --standalone",
         "watch": "node --require=./scripts/suppressExperimentalWarnings.js scripts/build/build.mjs --watch --dev",
@@ -34,7 +35,8 @@
         "test:ts": "tsc --noEmit",
         "test:installer": "node installer/test.mjs",
         "bump": "./scripts/bump.sh",
-        "dist": "pnpm build && electron-builder --win nsis --x64",
+        "dist": "pnpm build && electron-builder --win nsis --x64 && pnpm dist:patcher",
+        "dist:patcher": "node scripts/build/installer.mjs",
         "dist:dir": "pnpm build && electron-builder --win dir --x64",
         "build:dev": "node --require=./scripts/suppressExperimentalWarnings.js scripts/build/build.mjs --dev"
     },

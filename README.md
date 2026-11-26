@@ -5,17 +5,17 @@
 </p>
 
 <p align="center">
-  <strong>A Discord client for Windows with 173 plugins, built on top of the web client you already know.</strong>
+  <strong>A plugin layer for the Discord app you already have. 173 plugins, inside Discord itself.</strong>
 </p>
 
 <p align="center">
-  <a href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Client-Setup-1.0.0-x64.exe">
-    <img src=".github/assets/download-button.svg" alt="Download Zycord Client for Windows" width="420">
+  <a href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Patcher-Setup-1.0.0.exe">
+    <img src=".github/assets/download-button.svg" alt="Download the Zycord installer for Windows" width="420">
   </a>
 </p>
 
 <p align="center">
-  <sub>Version 1.0.0 &nbsp;|&nbsp; 97.7 MB &nbsp;|&nbsp; Windows 10 and 11, x64 &nbsp;|&nbsp; Free and open source</sub>
+  <sub>Version 1.0.0 &nbsp;|&nbsp; 530 KB &nbsp;|&nbsp; Windows 10 and 11, x64 &nbsp;|&nbsp; Requires Discord installed &nbsp;|&nbsp; Free and open source</sub>
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@
   <a href="#install">Install</a> &nbsp;|&nbsp;
   <a href="#what-it-does">Features</a> &nbsp;|&nbsp;
   <a href="#every-feature">All 173 plugins</a> &nbsp;|&nbsp;
-  <a href="#patching-an-existing-discord-install">Patch</a> &nbsp;|&nbsp;
+  <a href="#how-it-installs">How it installs</a> &nbsp;|&nbsp;
   <a href="#build-from-source">Build</a> &nbsp;|&nbsp;
   <a href="#what-it-is-not">Disclaimer</a>
 </p>
@@ -37,9 +37,9 @@
 
 ## What it is
 
-Zycord Client is a desktop application for Windows. It opens Discord's web client in its own window and adds a plugin layer on top: 173 plugins, a theme engine, interface zoom from 50 to 200 percent, a settings panel, and a tray icon.
+Zycord is a patch for the Discord desktop app on Windows. It does not install a second client or open a second window: it replaces the file Discord loads at startup with one that adds a plugin layer, then hands control back to Discord. You launch Discord exactly as you always have.
 
-It installs to its own directory and runs as a separate program. Installing it leaves the official Discord application alone, and both can be installed side by side.
+Inside Discord you get 173 plugins, a theme engine, interface zoom from 50 to 200 percent, a settings panel, and everything else listed below.
 
 
 ---
@@ -48,17 +48,18 @@ It installs to its own directory and runs as a separate program. Installing it l
 
 | Step | Action |
 | --- | --- |
-| 1 | Download the installer using the button at the top of this page. |
-| 2 | Run `Zycord-Client-Setup-1.0.0-x64.exe` and choose an install location. |
-| 3 | Launch Zycord from the Start menu or the desktop shortcut. |
+| 1 | Make sure the Discord desktop app is installed. |
+| 2 | Download the installer using the button at the top of this page. |
+| 3 | Run `Zycord-Patcher-Setup-1.0.0.exe` and pick **Install**. |
+| 4 | Start Discord the way you normally do. |
 
 The build is unsigned. Windows SmartScreen will show a warning the first time. Choose **More info**, then **Run anyway**.
 
-The app is a standalone client and does not touch the official Discord installation. If you already use Discord's desktop app and would rather patch it in place, `pnpm inject` swaps `resources/app.asar` for the Zycord patcher and keeps the original as `_app.asar`. `pnpm uninject` restores it. See [Patching an existing Discord install](#patching-an-existing-discord-install).
+Close Discord before installing. The installer stops if it cannot write to the client.
 
 <p align="center">
-  <a href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Client-Setup-1.0.0-x64.exe">
-    <img src=".github/assets/download-button.svg" alt="Download Zycord Client for Windows" width="420">
+  <a href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Patcher-Setup-1.0.0.exe">
+    <img src=".github/assets/download-button.svg" alt="Download the Zycord installer for Windows" width="420">
   </a>
 </p>
 
@@ -101,19 +102,31 @@ Every feature and all 173 plugins are documented on the website, with screenshot
 
 ---
 
-## Patching an existing Discord install
+## How it installs
 
-This is optional. It is how tools of this kind are usually used, and it means you keep using the Discord window you already have.
+The installer opens with four actions.
+
+| Action | What it does |
+| --- | --- |
+| **Install** | Detects Discord Stable, PTB, Canary and Development. For each one found, it moves `resources/app.asar` to `resources/_app.asar` and writes the Zycord patcher in its place. |
+| **Repair** | Rewrites the patch from the installed files without touching `_app.asar`. Use it if Discord starts but the plugins do not load. |
+| **Update** | Downloads the current Zycord build from the latest release and applies it over the patched install. |
+| **Uninstall** | Deletes the patch, renames `_app.asar` back to `app.asar`, and removes Zycord's own settings folder. Discord is left exactly as it was. |
+
+`_app.asar` is your original client. The installer never overwrites it, so Uninstall always has something to restore.
+
+Discord replaces `app.asar` when it updates itself. Zycord notices the new version at startup and re-applies the patch automatically, so you do not need to reinstall after a Discord update.
+
+The same actions are available from the command line, which is what the build scripts use:
 
 ```sh
-pnpm inject                          # stable channel, newest version
-pnpm inject -- --branch canary       # a different channel
-pnpm inject -- --all                 # every installed version
-pnpm uninject                        # restore the original app.asar
-pnpm inject:list                     # show which installs are patched
+pnpm inject                 # install, newest version of each detected channel
+pnpm inject:list            # show which channels are installed and patched
+pnpm uninject               # restore the original app.asar
+node installer/cli.mjs repair
+node installer/cli.mjs update
+node installer/cli.mjs purge
 ```
-
-Discord replaces `app.asar` on every update, so the patch is applied again at runtime when the client notices a new version. If a patch ever fails, `pnpm uninject` puts the original file back.
 
 ---
 

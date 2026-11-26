@@ -19,7 +19,7 @@
  * handles that itself at runtime; this command is for the initial install.
  */
 
-import { existsSync, mkdirSync, readdirSync, renameSync, rmSync, statSync, writeFileSync, copyFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync, copyFileSync } from "fs";
 import { createRequire } from "module";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
@@ -27,7 +27,19 @@ import { fileURLToPath } from "url";
 const require = createRequire(import.meta.url);
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const PATCHER = join(ROOT, "dist", "patcher.js");
+const ASSET_DIR = join(ROOT, "dist", "patcher");
+
+// Files the patcher reads from __dirname at runtime. Shipping patcher.js on its
+// own produces an app that boots and then dies on the first window, because the
+// preload and renderer scripts are loaded from the same directory.
+const ASSETS = [
+    "patcher.js",
+    "preload.js",
+    "renderer.js",
+    "renderer.css",
+    "patcher.js.LEGAL.txt",
+    "renderer.js.LEGAL.txt"
+];
 
 const BRANCHES = {
     stable: "Discord",
@@ -37,6 +49,7 @@ const BRANCHES = {
 };
 
 const MARKER = "zycord-patch.json";
+const VERSION = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf-8")).version;
 
 function loadAsar() {
     // @electron/asar ships inside the pnpm store through electron-builder.
@@ -89,8 +102,9 @@ function list() {
 }
 
 async function buildPatcherAsar() {
-    if (!existsSync(PATCHER)) {
-        throw new Error(`Missing ${PATCHER}. Run pnpm build first.`);
+    const missing = ASSETS.filter(f => !existsSync(join(ASSET_DIR, f)));
+    if (missing.length) {
+        throw new Error(`Missing ${missing.join(", ")} in dist/patcher. Run pnpm build first.`);
     }
 
     const asar = loadAsar();
@@ -103,7 +117,7 @@ async function buildPatcherAsar() {
     // Discord's Electron entry point. It hands control to the patcher, which
     // then sets require.main.filename to the real _app.asar.
     writeFileSync(join(appDir, "index.js"), "require(__dirname + '/patcher.js');\n");
-    copyFileSync(PATCHER, join(appDir, "patcher.js"));
+    for (const asset of ASSETS) copyFileSync(join(ASSET_DIR, asset), join(appDir, asset));
 
     writeFileSync(join(appDir, "package.json"), JSON.stringify({
         name: "discord",
@@ -116,7 +130,7 @@ async function buildPatcherAsar() {
 
     writeFileSync(join(staging, MARKER), JSON.stringify({
         product: "Zycord",
-        patcher: PATCHER,
+        version: VERSION,
         builtAt: new Date().toISOString()
     }, null, 2) + "\n");
 
@@ -175,17 +189,149 @@ function uninstall(branch, { all = false } = {}) {
     }
 }
 
+/** Where the patched build keeps its own state, beside Discord's app folder. */
+function installStatePath(root) {
+    return join(root, MARKER);
+}
+
+function readInstallState(root) {
+    try {
+        return JSON.parse(readFileSync(installStatePath(root), "utf-8"));
+    } catch {
+        return null;
+    }
+}
+
+async function installAll({ force = false } = {}) {
+    const built = await buildPatcherAsar();
+    let count = 0;
+
+    for (const branch of Object.keys(BRANCHES)) {
+        const root = discordRoot(branch);
+        const versions = versionDirs(root);
+        if (!versions.length) continue;
+
+        for (const v of versions) {
+            const resources = join(v.dir, "resources");
+            const target = join(resources, "app.asar");
+            const backup = join(resources, "_app.asar");
+
+            if (existsSync(backup) && !force) {
+                console.log(`${branch} ${v.version}: already patched`);
+                continue;
+            }
+            if (!existsSync(target) && !existsSync(backup)) continue;
+
+            if (!existsSync(backup)) renameSync(target, backup);
+            copyFileSync(built, target);
+            count++;
+
+            mkdirSync(root, { recursive: true });
+            writeFileSync(installStatePath(root), JSON.stringify({
+                product: "Zycord",
+                version: VERSION,
+                branch,
+                discordVersion: versions[0].version,
+                installedAt: new Date().toISOString()
+            }, null, 2) + "\n");
+
+            console.log(`${branch} ${v.version}: patched`);
+        }
+    }
+
+    rmSync(join(ROOT, "dist", ".zycord-inject"), { recursive: true, force: true });
+
+    if (!count) console.log("Every detected Discord install is already patched.");
+}
+
+/**
+ * Repair rewrites the patch from the currently installed files without
+ * touching the backup, which is the only state that cannot be regenerated.
+ */
+async function repair() {
+    let repaired = 0;
+
+    for (const branch of Object.keys(BRANCHES)) {
+        const root = discordRoot(branch);
+        for (const v of versionDirs(root)) {
+            const resources = join(v.dir, "resources");
+            const backup = join(resources, "_app.asar");
+            if (!existsSync(backup)) continue;
+
+            const built = await buildPatcherAsar();
+            copyFileSync(built, join(resources, "app.asar"));
+            repaired++;
+            console.log(`${branch} ${v.version}: patch rewritten from backup`);
+        }
+    }
+
+    rmSync(join(ROOT, "dist", ".zycord-inject"), { recursive: true, force: true });
+
+    if (!repaired) {
+        console.log("Nothing to repair: no patched Discord install was found.");
+        console.log("Run install first.");
+    }
+}
+
+/**
+ * Update rebuilds the patch from the files bundled with this build and applies
+ * it over whatever is installed. The original app.asar is never overwritten, so
+ * a bad update can always be undone with uninstall.
+ */
+async function update() {
+    await installAll({ force: true });
+}
+
+function purge() {
+    for (const branch of Object.keys(BRANCHES)) {
+        const root = discordRoot(branch);
+        const state = readInstallState(root);
+        const versions = versionDirs(root);
+        if (!versions.length) continue;
+
+        for (const v of versions) {
+            const resources = join(v.dir, "resources");
+            const backup = join(resources, "_app.asar");
+            if (!existsSync(backup)) continue;
+
+            rmSync(join(resources, "app.asar"), { force: true });
+            renameSync(backup, join(resources, "app.asar"));
+            console.log(`${branch} ${v.version}: restored the original app.asar`);
+        }
+
+        rmSync(installStatePath(root), { force: true });
+        if (state) console.log(`${branch}: removed Zycord install state`);
+    }
+
+    const dataDir = join(process.env.APPDATA ?? "", "Zycord");
+    if (dataDir && existsSync(dataDir)) {
+        rmSync(dataDir, { recursive: true, force: true });
+        console.log(`Removed settings and themes at ${dataDir}`);
+    }
+}
+
 function usage(code = 0) {
-    console.log(`Zycord patcher installer
+    console.log(`Zycord patcher installer ${VERSION}
 
   install   [--branch stable|ptb|canary|development] [--all] [--force]
+  repair
+  update
   uninstall [--branch stable|ptb|canary|development] [--all]
+  purge
   list
+
+  install    patch the newest Discord build on each detected channel
+  repair     rewrite the patch, leaving the original backup alone
+  update     apply this build's patch over an existing install
+  uninstall  restore the original app.asar for one channel or version
+  purge      restore every channel and delete Zycord's own data
+  list       show which channels are installed and patched
 
 Examples
   node installer/cli.mjs list
-  node installer/cli.mjs install --branch stable
-  node installer/cli.mjs uninstall --branch canary --all
+  node installer/cli.mjs install
+  node installer/cli.mjs update
+  node installer/cli.mjs purge
 `);
     process.exit(code);
 }
@@ -199,9 +345,17 @@ async function main(argv) {
 
     switch (command) {
         case "install":
-            return install(branch, { all, force });
+            return all || branch === "all"
+                ? installAll({ force })
+                : install(branch, { all, force });
+        case "repair":
+            return repair();
+        case "update":
+            return update();
         case "uninstall":
             return uninstall(branch, { all });
+        case "purge":
+            return purge();
         case "list":
             return list();
         case undefined:

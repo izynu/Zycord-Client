@@ -57,6 +57,10 @@ const nodeCommonOpts = {
     external: ["electron", "original-fs", "~pluginNatives", ...commonOpts.external]
 };
 
+// The patcher profile builds the bundles a Discord-installed app.asar needs.
+// They must not collide with the standalone profile, which owns dist/ itself.
+const OUT_DIR = process.argv.includes("--patcher") ? "dist/patcher" : "dist";
+
 const sourceMapFooter = s => watch ? "" : `//# sourceMappingURL=vencord://${s}.js.map`;
 const sourcemap = watch ? "inline" : "external";
 
@@ -122,7 +126,7 @@ const buildConfigs = ([
     {
         ...nodeCommonOpts,
         entryPoints: ["src/main/index.ts"],
-        outfile: "dist/patcher.js",
+        outfile: `${OUT_DIR}/patcher.js`,
         footer: { js: "//# sourceURL=file:///VencordPatcher\n" + sourceMapFooter("patcher") },
         sourcemap,
         plugins: [
@@ -139,7 +143,7 @@ const buildConfigs = ([
     {
         ...commonOpts,
         entryPoints: ["src/Vencord.ts"],
-        outfile: "dist/renderer.js",
+        outfile: `${OUT_DIR}/renderer.js`,
         format: "iife",
         target: ["esnext"],
         footer: { js: "//# sourceURL=file:///VencordRenderer\n" + sourceMapFooter("renderer") },
@@ -158,7 +162,7 @@ const buildConfigs = ([
     {
         ...nodeCommonOpts,
         entryPoints: ["src/preload.ts"],
-        outfile: "dist/preload.js",
+        outfile: `${OUT_DIR}/preload.js`,
         footer: { js: "//# sourceURL=file:///VencordPreload\n" + sourceMapFooter("preload") },
         sourcemap,
         define: {
@@ -172,7 +176,7 @@ const buildConfigs = ([
     {
         ...nodeCommonOpts,
         entryPoints: ["src/main/index.ts"],
-        outfile: "dist/vencordDesktopMain.js",
+        outfile: `${OUT_DIR}/vencordDesktopMain.js`,
         footer: { js: "//# sourceURL=file:///VencordDesktopMain\n" + sourceMapFooter("vencordDesktopMain") },
         sourcemap,
         plugins: [
@@ -188,7 +192,7 @@ const buildConfigs = ([
     {
         ...commonOpts,
         entryPoints: ["src/Vencord.ts"],
-        outfile: "dist/vencordDesktopRenderer.js",
+        outfile: `${OUT_DIR}/vencordDesktopRenderer.js`,
         format: "iife",
         target: ["esnext"],
         footer: { js: "//# sourceURL=file:///VencordDesktopRenderer\n" + sourceMapFooter("vencordDesktopRenderer") },
@@ -207,7 +211,7 @@ const buildConfigs = ([
     {
         ...nodeCommonOpts,
         entryPoints: ["src/preload.ts"],
-        outfile: "dist/vencordDesktopPreload.js",
+        outfile: `${OUT_DIR}/vencordDesktopPreload.js`,
         footer: { js: "//# sourceURL=file:///VencordPreload\n" + sourceMapFooter("vencordDesktopPreload") },
         sourcemap,
         define: {
