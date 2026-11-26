@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Features, Zycord Client</title>
+<meta name="description" content="What Zycord Client ships: 108 plugins enabled by default out of 175, interface zoom from 50 to 200 percent, the Feature Toggles panel, a system tray, message logging, and the theme engine.">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<button class="skip" type="button" onclick="document.getElementById('main').focus()">Skip to content</button>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="wordmark" href="../" aria-label="Zycord home">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="markFill" x1="0" y1="0" x2="0.15" y2="1">
+            <stop offset="0" stop-color="#2E1278"/>
+            <stop offset="0.58" stop-color="#582ED6"/>
+            <stop offset="1" stop-color="#1A76F6"/>
+          </linearGradient>
+        </defs>
+        <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#markFill)"/>
+        <path d="M18.25 18.5H45.75V25.75L33.25 38.25H45.75V45.5H18.25V38.25H23L35.5 25.75H18.25Z" fill="#fff"/>
+      </svg>
+      <span>Zycord</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="../features/" aria-current="page">Features</a>
+      <a href="https://github.com/izynu/Zycord-Client/releases/latest">Download</a>
+      <a href="../privacy/">Privacy</a>
+      <a href="../terms/">Terms</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1" class="wrap legal">
+  <h1>Features</h1>
+  <p class="updated">Every entry below is in build 1.0.0. Screenshots are captures of the running client, not mockups.</p>
+
+  <div class="legal-panel glass feature-list">
+
+    <section class="feature">
+      <div class="feature-copy">
+        <h2>Plugins, 108 on out of 175</h2>
+        <p>The client registers 175 plugins and starts 108 of them the first time it runs. Each plugin has its own switch and its own settings section. The Plugins tab lists all of them and shows which are running.</p>
+      </div>
+      <figure class="shot">
+        <img src="../img/plugins-list.png" width="1200" height="750" loading="lazy"
+             alt="The Plugins tab in Zycord Client, listing plugins with a toggle beside each one">
+        <figcaption>The Plugins tab in the running client, with 108 of 175 plugins enabled.</figcaption>
+      </figure>
+    </section>
+
+    <section class="feature">
+      <div class="feature-copy">
+        <h2>Interface zoom, 50 to 200 percent</h2>
+        <p>A slider in the Zycord tab scales the whole window between 0.5 and 2.0. The window keeps its size; the content inside it scales. The value is stored on the Zycord Desktop plugin, so the slider here and the plugin setting read from the same place. It applies without a restart.</p>
+      </div>
+      <figure class="shot">
+        <img src="../img/settings-interface-zoom.png" width="1200" height="750" loading="lazy"
+             alt="The Interface Zoom slider in Zycord Client settings, marked from 0.5 to 2 with the current value shown as 100 percent">
+        <figcaption>The Interface Zoom slider, marked 0.5 through 2 and reporting the current value as a percentage.</figcaption>
+      </figure>
+    </section>
+
+    <section class="feature">
+      <div class="feature-copy">
+        <h2>Feature Toggles panel</h2>
+        <p>One panel collects seven switches for features that are otherwise reached through plugin settings: hide locked emoji, voice channel text chat, unsuppress embeds, strip tracking from links, show hidden channels, message logger, and anonymise file names. Each switch writes the plugin's own stored setting. Switches that need a restart say so in their description.</p>
+      </div>
+      <figure class="shot">
+        <img src="../img/settings-feature-toggles.png" width="1200" height="750" loading="lazy"
+             alt="The Feature Toggles panel in Zycord Client, showing seven feature switches">
+        <figcaption>The Feature Toggles panel. Switches that need a restart are labelled as such.</figcaption>
+      </figure>
+    </section>
+
+    <section class="feature feature-plain">
+      <div class="feature-copy">
+        <h2>System tray with hide to tray</h2>
+        <p>Closing the window hides it and keeps the client running behind a tray icon. The tray menu has entries to open the window, hide it again, mute notifications, and quit. The close-to-tray behaviour only applies while the tray icon exists, so quitting from the tray menu does close the app.</p>
+      </div>
+    </section>
+
+    <section class="feature feature-plain">
+      <div class="feature-copy">
+        <h2>Message logging</h2>
+        <p>The message logger keeps a record of messages you have seen, held in the client's own data folder on your machine. Deleted and edited messages stay readable for the current session. Nothing is uploaded.</p>
+      </div>
+    </section>
+
+    <section class="feature feature-plain">
+      <div class="feature-copy">
+        <h2>Role and permission viewers</h2>
+        <p>A permissions viewer breaks down what a member can and cannot do in a channel, showing which role grants or denies each permission. A role viewer exposes the role list and its members from the same context menus.</p>
+      </div>
+    </section>
+
+    <section class="feature feature-plain">
+      <div class="feature-copy">
+        <h2>Profile theming</h2>
+        <p>Profile theming applies colour and decoration to profile cards, and the client reads the theme attributes needed for those to render. It can also be turned off, which leaves profiles in Discord's default styling.</p>
+      </div>
+    </section>
+
+    <section class="feature feature-plain">
+      <div class="feature-copy">
+        <h2>Discord analytics blocked by default</h2>
+        <p>The analytics block is on when the client first runs. It stops Discord's tracking events from being sent. Badge progress events are a separate switch and stay on by default; both are restart-needed settings.</p>
+      </div>
+    </section>
+
+    <section class="feature">
+      <div class="feature-copy">
+        <h2>Theme engine with QuickCSS</h2>
+        <p>The theme engine loads CSS themes from the client's theme folder and applies the ones you enable. QuickCSS is a second channel for your own rules: a file the client watches and re-applies as you save, so changes land without restarting.</p>
+      </div>
+      <figure class="shot">
+        <img src="../img/themes-tab.png" width="1200" height="750" loading="lazy"
+             alt="The Themes tab in Zycord Client, with entries for QuickCSS and installed themes">
+        <figcaption>The Themes tab, where QuickCSS and installed themes are managed.</figcaption>
+      </figure>
+    </section>
+
+    <section class="feature feature-plain">
+      <div class="feature-copy">
+        <h2>Screen sharing with a capture handler</h2>
+        <p>The client installs a display media request handler in the main process. When Discord asks to capture a screen or window, the handler answers with a source instead of falling through to an empty stream. Audio capture is wired for system audio on Windows only.</p>
+      </div>
+    </section>
+
+    <section class="feature feature-plain">
+      <div class="feature-copy">
+        <h2>Voice channel text chat</h2>
+        <p>Joining a voice channel opens that channel's text chat alongside it, so the messages are reachable without leaving the call. This is one of the switches in the Feature Toggles panel, and it applies immediately.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <a class="legal-back" href="../">Back to the main page</a>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <span class="wordmark-small">Zycord</span>
+      <span class="copyright">Copyright 2026 Zynu.</span>
+    </div>
+    <nav class="footer-links" aria-label="Footer">
+      <a href="../privacy/">Privacy Policy</a>
+      <a href="../terms/">Terms</a>
+      <a href="https://github.com/izynu/Zycord-Client">GitHub</a>
+      <a href="https://zynu.me">zynu.me</a>
+    </nav>
+  </div>
+  <div class="wrap footer-note">
+    <p>GPL-3.0-or-later. Discord is a trademark of Discord Inc. This project is not affiliated with or endorsed by Discord.</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
+<button class="skip" type="button" onclick="document.getElementById('main').focus()">Skip to content</button>
 
 <header class="site-header">
   <div class="wrap header-inner">
@@ -28,14 +28,15 @@
       <span>Zycord</span>
     </a>
     <nav class="nav" aria-label="Primary">
-      <a href="index.html#download">Download</a>
-      <a href="index.html#features">Features</a>
+      <a href="../features/">Features</a>
+      <a href="https://github.com/izynu/Zycord-Client/releases/latest">Download</a>
       <a href="../privacy/" aria-current="page">Privacy</a>
+      <a href="../terms/">Terms</a>
     </nav>
   </div>
 </header>
 
-<main id="main" class="wrap legal">
+<main id="main" tabindex="-1" class="wrap legal">
   <h1>Privacy Policy</h1>
   <p class="updated">Last updated: 26 November 2026</p>
 

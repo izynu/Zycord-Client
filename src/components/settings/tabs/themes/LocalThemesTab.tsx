@@ -127,12 +127,13 @@ export function LocalThemesTab() {
     return (
         <Flex flexDirection="column" gap="1em">
             <Card>
-                <Heading className={Margins.bottom8}>Find Themes:</Heading>
+                <Heading className={Margins.bottom8}>Find themes</Heading>
                 <Flex gap="0.4em" flexDirection="column" justifyContent="flex-start" className={Margins.bottom8}>
-                    <span>&ndash; <Link href="https://betterdiscord.app/themes">BetterDiscord theme list</Link></span>
-                    <span>&ndash; <Link href="https://github.com/search?q=discord+theme">GitHub</Link></span>
+                    <span><Link href="https://github.com/search?q=discord+theme">Discord themes on GitHub</Link></span>
                 </Flex>
-                <Paragraph>If using the BD site, click on "Download" and place the downloaded .theme.css file into your themes folder.</Paragraph>
+                <Paragraph>
+                    A theme is a single CSS file. Download one and place the .css file into your themes folder.
+                </Paragraph>
             </Card>
 
             <Card>
