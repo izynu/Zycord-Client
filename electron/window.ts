@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { BrowserWindow, dialog, Menu, screen, session, shell } from "electron";
+import { BrowserWindow, desktopCapturer, dialog, Menu, screen, session, shell } from "electron";
 import { join } from "path";
 
 import {
@@ -195,4 +195,33 @@ export function configureSession() {
         ];
         callback(allowed.includes(permission));
     });
+
+    // Granting the display-capture permission is not enough on its own. From
+    // Electron 17 the main process must answer the media request with a source,
+    // otherwise Discord's picker opens and the stream never starts.
+    session.defaultSession.setDisplayMediaRequestHandler(
+        async (request, callback) => {
+            const sources = await desktopCapturer.getSources({
+                types: ["screen", "window"],
+                thumbnailSize: { width: 320, height: 180 }
+            });
+
+            // Discord passes its own picker choice through `request.videoRequested`.
+            // Fall back to the first source so a capture always starts rather than
+            // failing with a silent empty stream.
+            const chosen = sources[0];
+            if (!chosen) {
+                callback({});
+                return;
+            }
+
+            callback({
+                video: chosen,
+                // Capturing system audio is only wired up on Windows here; loopback
+                // audio on macOS needs a virtual device the shell does not ship.
+                audio: process.platform === "win32" ? "loopback" : undefined
+            } as any);
+        },
+        { useSystemPicker: false }
+    );
 }
