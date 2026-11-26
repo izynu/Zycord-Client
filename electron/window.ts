@@ -262,4 +262,30 @@ export function configureSession() {
         },
         { useSystemPicker: false }
     );
+
+    // Without this, Electron saves silently into the default downloads folder with
+    // no dialog and no feedback, so an attachment download looks like it did nothing.
+    session.defaultSession.on("will-download", (_event, item, webContents) => {
+        item.on("done", (_e, state) => {
+            if (state === "completed") {
+                const win = BrowserWindow.fromWebContents(webContents);
+                if (win && !win.isDestroyed()) {
+                    dialog.showMessageBox(win, {
+                        type: "info",
+                        title: "Download complete",
+                        message: `${item.getFilename()} saved`,
+                        detail: item.getSavePath(),
+                        buttons: ["Show in folder", "Close"],
+                        defaultId: 0,
+                        cancelId: 1,
+                        noLink: true
+                    }).then(({ response }) => {
+                        if (response === 0) shell.showItemInFolder(item.getSavePath());
+                    }).catch(() => { });
+                }
+            } else if (state === "interrupted") {
+                console.error("[Zycord] Download interrupted:", item.getFilename());
+            }
+        });
+    });
 }
