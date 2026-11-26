@@ -17,11 +17,11 @@ import { buildMenu, configureSession, createMainWindow, getMainWindow } from "./
 // %APPDATA%\Electron instead of %APPDATA%\Zycord.
 app.setName(APP_NAME);
 
-// The Zycord data directory mirrors what the Vencord main bundle expects.
-// Pin it explicitly so a stale folder from another build cannot shadow it.
+// The Zycord data directory is what the core bundle reads for settings and
+// themes. Pin it explicitly so a stale folder from another build cannot shadow it.
 const userData = join(app.getPath("appData"), APP_NAME);
 app.setPath("userData", userData);
-process.env.VENCORD_USER_DATA_DIR = userData;
+process.env.ZYCORD_USER_DATA_DIR = userData;
 process.env.DATA_DIR = userData;
 
 if (process.platform === "win32") app.setAppUserModelId(APP_ID);

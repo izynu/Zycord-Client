@@ -17,14 +17,34 @@
 */
 
 import { app } from "electron";
+import { cpSync, existsSync, rmSync } from "fs";
 import { join } from "path";
 
-export const DATA_DIR = process.env.VENCORD_USER_DATA_DIR ?? (
+const configuredDataDir = process.env.ZYCORD_USER_DATA_DIR;
+
+export const DATA_DIR = configuredDataDir ?? (
     process.env.DISCORD_USER_DATA_DIR
-        ? join(process.env.DISCORD_USER_DATA_DIR, "..", "VencordData")
-        : join(app.getPath("userData"), "..", "Vencord")
+        ? join(process.env.DISCORD_USER_DATA_DIR, "..", "ZycordData")
+        : join(app.getPath("userData"), "..", "Zycord")
 );
+
 export const SETTINGS_DIR = join(DATA_DIR, "settings");
+
+// Settings, plugins and themes used to live in a folder named after the
+// upstream project, alongside the current one. Move them across once rather
+// than stranding an existing install on default settings.
+if (!existsSync(SETTINGS_DIR)) {
+    const legacyDataDir = join(DATA_DIR, "..", "Vencord");
+    if (existsSync(join(legacyDataDir, "settings"))) {
+        try {
+            cpSync(legacyDataDir, DATA_DIR, { recursive: true });
+            rmSync(legacyDataDir, { recursive: true, force: true });
+        } catch (err) {
+            console.error("[Zycord] Could not migrate the old data folder", err);
+        }
+    }
+}
+
 export const THEMES_DIR = join(DATA_DIR, "themes");
 export const QUICK_CSS_PATH = join(SETTINGS_DIR, "quickCss.css");
 export const SETTINGS_FILE = join(SETTINGS_DIR, "settings.json");

@@ -80,7 +80,7 @@ ipcMain.handle(IpcEvents.OPEN_EXTERNAL, (_, url) => {
         throw "Disallowed protocol.";
 
     shell.openExternal(url)
-        .catch(err => console.error("[Vencord] Failed to open external link", url, err));
+        .catch(err => console.error("[Zycord] Failed to open external link", url, err));
 });
 
 

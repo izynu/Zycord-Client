@@ -57,12 +57,12 @@ function patchLatest() {
 
         if (!existsSync(oldVencordAsar) || !existsSync(newAppAsar) || existsSync(newAppAsarBackup)) return;
 
-        console.info(`[Vencord] Detected Host Update (${currentVersion} -> ${latestVersion}). Repatching...`);
+        console.info(`[Zycord] Detected Host Update (${currentVersion} -> ${latestVersion}). Repatching...`);
 
         renameSync(newAppAsar, newAppAsarBackup);
         copyFileSync(oldVencordAsar, newAppAsar);
     } catch (err) {
-        console.error("[Vencord] Failed to repatch latest host update", err);
+        console.error("[Zycord] Failed to repatch latest host update", err);
     }
 }
 
