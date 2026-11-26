@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <sub>Version 1.0.0 &nbsp;|&nbsp; 530 KB &nbsp;|&nbsp; Windows 10 and 11, x64 &nbsp;|&nbsp; Requires Discord installed &nbsp;|&nbsp; Free and open source</sub>
+  <sub>Version 1.0.0 &nbsp;|&nbsp; 520 KB &nbsp;|&nbsp; Windows 10 and 11, x64 &nbsp;|&nbsp; Requires Discord installed &nbsp;|&nbsp; Free and open source</sub>
 </p>
 
 <p align="center">
@@ -48,14 +48,21 @@ Inside Discord you get 173 plugins, a theme engine, interface zoom from 50 to 20
 
 | Step | Action |
 | --- | --- |
-| 1 | Make sure the Discord desktop app is installed. |
-| 2 | Download the installer using the button at the top of this page. |
-| 3 | Run `Zycord-Patcher-Setup-1.0.0.exe` and pick **Install**. |
-| 4 | Start Discord the way you normally do. |
+| 1 | Install the Discord desktop app if it is not already installed. |
+| 2 | Close Discord completely. Right-click the tray icon and choose **Quit Discord**, then check Task Manager for any remaining `Discord.exe` process. |
+| 3 | Download the installer using the button at the top of this page. |
+| 4 | Run `Zycord-Patcher-Setup-1.0.0.exe` and pick **Install**. |
+| 5 | Start Discord the way you normally do. |
+
+Closing the window is not enough. Discord keeps running in the notification area, and while it runs it holds its own program files open, so the installer cannot replace them. If Discord is still running, the installer stops and says so instead of reporting a patch that did not happen.
+
+If Discord is stuck and will not quit, end `Discord.exe` in Task Manager, or run this in Command Prompt:
+
+```sh
+taskkill /IM Discord.exe /F
+```
 
 The build is unsigned. Windows SmartScreen will show a warning the first time. Choose **More info**, then **Run anyway**.
-
-Close Discord before installing, including the tray icon. Discord holds its program files open, so the installer stops and says so rather than reporting a patch that did not happen.
 
 <p align="center">
   <a href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Patcher-Setup-1.0.0.exe">
