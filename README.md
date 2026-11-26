@@ -6,7 +6,13 @@ Standalone Electron desktop client for Windows that runs Discord's web app in it
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-5b6b7a?style=flat-square)](https://github.com/izynu/Zycord-Client/releases)
 [![Version](https://img.shields.io/badge/version-1.0.0-5b6b7a?style=flat-square)](https://github.com/izynu/Zycord-Client/releases)
 
-[![Download for Windows](https://img.shields.io/badge/Download-Zycord%20Client%201.0.0%20for%20Windows-4a5a68?style=for-the-badge)](https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Client-Setup-1.0.0-x64.exe)
+<p align="center">
+  <a href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Client-Setup-1.0.0-x64.exe">
+    <img src="https://img.shields.io/badge/Download%20for%20Windows-97.7%20MB-1a76f6?style=for-the-badge&logo=windows&logoColor=white" alt="Download Zycord Client for Windows" height="44">
+  </a>
+</p>
+
+<p align="center"><sub>Windows 10 and 11, x64. Open source under GPL-3.0-or-later.</sub></p>
 
 ![divider](.github/assets/divider.svg)
 
