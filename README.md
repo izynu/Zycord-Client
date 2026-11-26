@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Client-Setup-1.0.0-x64.exe">
-    <img src="https://img.shields.io/badge/DOWNLOAD-FOR%20WINDOWS-1a76f6?style=for-the-badge&logo=windows11&logoColor=white" alt="Download Zycord Client for Windows" height="52">
+    <img src=".github/assets/download-button.svg" alt="Download Zycord Client for Windows" width="420">
   </a>
 </p>
 
@@ -27,7 +27,7 @@
 <p align="center">
   <a href="#install">Install</a> &nbsp;|&nbsp;
   <a href="#what-it-does">Features</a> &nbsp;|&nbsp;
-  <a href="#every-plugin">All 173 plugins</a> &nbsp;|&nbsp;
+  <a href="#every-feature">All 173 plugins</a> &nbsp;|&nbsp;
   <a href="#build-from-source">Build</a> &nbsp;|&nbsp;
   <a href="#what-it-is-not">Disclaimer</a>
 </p>
@@ -40,7 +40,6 @@ Zycord Client is a desktop application for Windows. It opens Discord's web clien
 
 It installs to its own directory and runs as a separate program. The official Discord application is never modified, and both can be installed side by side.
 
-![The Zycord settings panel](docs/img/settings-feature-toggles.png)
 
 ---
 
@@ -56,7 +55,7 @@ The build is unsigned. Windows SmartScreen will show a warning the first time. C
 
 <p align="center">
   <a href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Client-Setup-1.0.0-x64.exe">
-    <img src="https://img.shields.io/badge/DOWNLOAD-ZYCORD%20CLIENT%201.0.0-1a76f6?style=for-the-badge&logo=windows11&logoColor=white" alt="Download Zycord Client 1.0.0" height="46">
+    <img src=".github/assets/download-button.svg" alt="Download Zycord Client for Windows" width="420">
   </a>
 </p>
 
@@ -79,25 +78,23 @@ The build is unsigned. Windows SmartScreen will show a warning the first time. C
 | **Theme engine** | Loads CSS themes, with a QuickCSS editor for live changes. |
 | **Window memory** | Restores size and position on launch, clamped to the current display. |
 
-<p align="center">
-  <img src="docs/img/settings-interface-zoom.png" alt="Interface zoom and the feature toggles panel" width="900">
-</p>
 
-<p align="center"><sub>The zoom slider and feature toggles, both in Settings, Zycord.</sub></p>
 
 ---
 
-## Every plugin
+## Every feature
 
-All 173 plugins are listed with their descriptions and default state on the website.
+Every feature and all 173 plugins are documented on the website, with screenshots.
 
 <p align="center">
   <a href="https://izynu.github.io/Zycord-Client/features/">
-    <img src="https://img.shields.io/badge/VIEW-ALL%20173%20PLUGINS-5b6b7a?style=for-the-badge" alt="View all plugins" height="40">
+    <img src="https://img.shields.io/badge/VIEW-ALL%20FEATURES-1a76f6?style=for-the-badge" alt="View all features" height="40">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://izynu.github.io/Zycord-Client/screenshots/">
+    <img src="https://img.shields.io/badge/VIEW-SCREENSHOTS-5b6b7a?style=for-the-badge" alt="View screenshots" height="40">
   </a>
 </p>
-
-Highlights include hidden channel listing, role and permission viewers, message logging, fake Nitro emoji and stickers, client themes, member counts, silent typing, and Spotify controls.
 
 ---
 

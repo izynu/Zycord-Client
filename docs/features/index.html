@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Features, Zycord Client</title>
-<meta name="description" content="What Zycord Client ships: 108 plugins enabled by default out of 175, interface zoom from 50 to 200 percent, the Feature Toggles panel, a system tray, message logging, and the theme engine.">
+<meta name="description" content="What Zycord Client ships: 87 plugins enabled by default out of 173, interface zoom from 50 to 200 percent, the Feature Toggles panel, a system tray, message logging, and the theme engine.">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -29,6 +29,7 @@
     </a>
     <nav class="nav" aria-label="Primary">
       <a href="../features/" aria-current="page">Features</a>
+      <a href="../screenshots/">Screenshots</a>
       <a href="https://github.com/izynu/Zycord-Client/releases/latest">Download</a>
       <a href="../privacy/">Privacy</a>
       <a href="../terms/">Terms</a>
@@ -36,25 +37,25 @@
   </div>
 </header>
 
-<main id="main" tabindex="-1" class="wrap legal">
+<main id="main" tabindex="-1" class="wrap wide features-main">
   <h1>Features</h1>
   <p class="updated">Every entry below is in build 1.0.0. Screenshots are captures of the running client, not mockups.</p>
 
-  <div class="legal-panel glass feature-list">
+  <div class="feature-grid">
 
-    <section class="feature">
+    <section class="feature feature-wide">
       <div class="feature-copy">
-        <h2>Plugins, 108 on out of 175</h2>
-        <p>The client registers 175 plugins and starts 108 of them the first time it runs. Each plugin has its own switch and its own settings section. The Plugins tab lists all of them and shows which are running.</p>
+        <h2>Plugins, 87 on out of 173</h2>
+        <p>The client registers 173 plugins and starts 87 of them the first time it runs. Each plugin has its own switch and its own settings section. The Plugins tab lists all of them and shows which are running.</p>
       </div>
       <figure class="shot">
         <img src="../img/plugins-list.png" width="1200" height="750" loading="lazy"
              alt="The Plugins tab in Zycord Client, listing plugins with a toggle beside each one">
-        <figcaption>The Plugins tab in the running client, with 108 of 175 plugins enabled.</figcaption>
+        <figcaption>The Plugins tab in the running client, with 87 of 173 plugins enabled.</figcaption>
       </figure>
     </section>
 
-    <section class="feature">
+    <section class="feature feature-wide">
       <div class="feature-copy">
         <h2>Interface zoom, 50 to 200 percent</h2>
         <p>A slider in the Zycord tab scales the whole window between 0.5 and 2.0. The window keeps its size; the content inside it scales. The value is stored on the Zycord Desktop plugin, so the slider here and the plugin setting read from the same place. It applies without a restart.</p>
@@ -66,7 +67,7 @@
       </figure>
     </section>
 
-    <section class="feature">
+    <section class="feature feature-wide">
       <div class="feature-copy">
         <h2>Feature Toggles panel</h2>
         <p>One panel collects seven switches for features that are otherwise reached through plugin settings: hide locked emoji, voice channel text chat, unsuppress embeds, strip tracking from links, show hidden channels, message logger, and anonymise file names. Each switch writes the plugin's own stored setting. Switches that need a restart say so in their description.</p>
@@ -113,7 +114,7 @@
       </div>
     </section>
 
-    <section class="feature">
+    <section class="feature feature-wide">
       <div class="feature-copy">
         <h2>Theme engine with QuickCSS</h2>
         <p>The theme engine loads CSS themes from the client's theme folder and applies the ones you enable. QuickCSS is a second channel for your own rules: a file the client watches and re-applies as you save, so changes land without restarting.</p>
@@ -141,8 +142,7 @@
 
   </div>
 
-  <a class="legal-back" href="../">Back to the main page</a>
-<section class="feature feature-plain" id="all-plugins">
+<section class="feature-block" id="all-plugins">
   <h2>Every plugin</h2>
   <p>All 173 plugins in the client. Environment specific features stay off by default; the rest can be enabled in Settings.</p>
   <div class="table-wrap">
@@ -1022,6 +1022,10 @@
   </div>
 </section>
 
+  <p class="cross-links">
+    <a href="../screenshots/">Screenshots of the client</a>
+    <a href="../">Back to the main page</a>
+  </p>
 </main>
 
 <footer class="site-footer">
