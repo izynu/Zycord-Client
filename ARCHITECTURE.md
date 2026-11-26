@@ -1,10 +1,10 @@
 # Zycord — how it works
 
 Zycord Client is a **standalone Electron app** that opens Discord's web app in its own
-window and injects a modified copy of the Vencord renderer into it. It never touches,
+window and injects a compiled renderer that adds the plugin system. It never touches,
 patches, or modifies the official Discord desktop installation.
 
-By Zynu. Based on Vencord, Copyright (c) Vendicated and contributors (GPL-3.0-or-later).
+By Zynu. GPL-3.0-or-later. Attribution details are in NOTICE.
 
 ---
 
@@ -18,7 +18,7 @@ Zycord.exe
 └── Electron main process
     ├── electron/main.ts
     │     app.whenReady() → require("./vencordDesktopMain.js")
-    │         └─ Vencord core: IPC handlers, settings stores, CSP patching,
+    │         └─ core bundle: IPC handlers, settings stores, CSP patching,
     │            vencord:// protocol, theme + QuickCSS file watchers
     │     then createMainWindow()
     │
@@ -28,7 +28,7 @@ Zycord.exe
     └── electron/preload.ts  (runs inside the Discord page)
           1. contextBridge.exposeInMainWorld("ZycordNative", …)
           2. Function(rendererPreloadSource)(require, process)
-             └─ Vencord's preload: exposes window.VencordNative
+             └─ core preload: exposes window.VencordNative
           3. webFrame.executeJavaScript(VencordRendererSource)
              └─ window.Vencord = { Api, Plugins, Components, … }
                 └─ starts every enabled plugin
@@ -54,7 +54,7 @@ hands them in explicitly:
 Function("require", "process", preloadSource)(require, process);
 ```
 
-That executes Vencord's preload, which exposes `window.VencordNative` — the bridge the
+That executes the core preload, which exposes `window.VencordNative`, the bridge the
 renderer calls for settings, themes, and native actions.
 
 **③ The renderer is an IIFE that assigns a global.**
@@ -75,9 +75,9 @@ Discord's own bundled modules in memory. No files on disk are modified.
 
 ---
 
-## What the standalone shape changes vs. Vencord-the-patcher
+## What the standalone shape changes vs. a patcher
 
-| | Vencord (patcher) | Zycord (standalone) |
+| | Patcher approach | Zycord (standalone) |
 |---|---|---|
 | Discord's files | `app.asar` renamed to `_app.asar`; injector written in its place | untouched |
 | Where code runs | inside Discord's own Electron process | inside Zycord's Electron process |
@@ -150,7 +150,7 @@ so Windows SmartScreen will warn on first run until the binary builds reputation
 
 - **Unsigned build.** SmartScreen warns. Signing requires a Windows code-signing
   certificate.
-- **Renderer injection depends on Discord's bundle shape.** Vencord's patches match
+- **Renderer injection depends on Discord's bundle shape.** The plugin patches match
   Discord's minified source by string. Discord ships new builds constantly; a Discord
   change can break individual plugins until the patch is updated upstream. The app keeps
   working — patches that no longer match are skipped and logged.
@@ -158,7 +158,7 @@ so Windows SmartScreen will warn on first run until the binary builds reputation
   renderer's update check fails harmlessly (one log line). Shipping updates means
   standing up a `latest.yml` and an `electron-updater` feed, or rebuilding.
 - **Upstream-only integrations are inert.** Cloud sync (`api.vencord.dev`), donor badges,
-  and the support server point at Vencord's infrastructure and are not available to
+  and the support server point at upstream infrastructure and are not available to
   Zycord.
 - **Windows is the only packaged target.** The shell is cross-platform Electron code,
   but only the NSIS installer is configured.

@@ -1,142 +1,64 @@
-# Zycord Client
+[![Zycord Client](.github/assets/wordmark.svg)](https://izynu.github.io/Zycord-Client/)
 
-A Discord client for Windows.
-By Zynu.
+Standalone Electron desktop client for Windows that runs Discord's web app in its own window.
 
----
+[![Licence](https://img.shields.io/badge/licence-GPL--3.0--or--later-5b6b7a?style=flat-square)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%20x64-5b6b7a?style=flat-square)](https://github.com/izynu/Zycord-Client/releases)
+[![Version](https://img.shields.io/badge/version-1.0.0-5b6b7a?style=flat-square)](https://github.com/izynu/Zycord-Client/releases)
+
+[![Download for Windows](https://img.shields.io/badge/Download-Zycord%20Client%201.0.0%20for%20Windows-4a5a68?style=for-the-badge)](https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Client-Setup-1.0.0-x64.exe)
+
+![divider](.github/assets/divider.svg)
 
 ## What it is
 
-Zycord is a standalone Electron client for Windows. It opens
-[discord.com](https://discord.com) inside its own application window and injects
-a forked build of the [Vencord](https://github.com/Vendicated/Vencord) renderer
-into that page.
-
-In plain terms: it is Discord's own web app, running in a native desktop window,
-with Vencord's plugin system added on top. That gives you the plugins it ships
-with, the theme engine, and a QuickCSS editor — without touching the official
-Discord desktop application. Zycord does not patch or modify the official
-Discord app.
-
-> [!WARNING]
-> Using a client modification may violate Discord's Terms of Service. Read the
-> [Disclaimer](#disclaimer) before installing.
-
----
-
-## Install (Windows)
-
-1. Download the latest Windows installer (`Zycord-Client-Setup-<version>-x64.exe`).
-2. Run it. The installer lets you choose the install directory.
-3. Launch **Zycord** from the Start menu or the desktop shortcut.
-
-The app is per-user by default and does not require administrator rights.
-
----
-
-## Build from source
-
-Requirements:
-
-- [Node.js](https://nodejs.org/) 22 or newer
-- [pnpm](https://pnpm.io/) 10 or newer
-
-```sh
-# 1. Install dependencies
-pnpm install
-
-# 2. Build the renderer and the Electron shell
-pnpm build
-
-# 3. Run it
-pnpm start
-```
-
-To produce the Windows installer:
-
-```sh
-pnpm dist
-```
-
-`pnpm dist` runs `electron-builder` targeting NSIS for Windows x64 and writes the
-output to `release/`. If you build on Linux, this cross-compile step needs
-[Wine](https://www.winehq.org/) installed and on your `PATH`.
-
----
+Zycord Client is a standalone Electron application for Windows that loads Discord's web app in its own window and adds a large plugin system on top. It runs from its own install directory and starts as a separate program, so the official Discord installation is left untouched. The plugin system is the main part of the product: 108 plugins are enabled by default and 175 are available. Everything else in the client, from interface zoom to the theme engine, is built around making that plugin layer usable day to day.
 
 ## Features
 
-- **Plugins** — 100+ built-in plugins, with per-plugin settings in the client's own UI.
-- **Themes** — Built-in theme support, including the ability to import CSS themes.
-- **QuickCSS** — A live CSS editor for tweaking the client without leaving it.
-- **Settings sync** — Optionally sync your plugin settings and configuration between devices.
-- **Privacy** — No telemetry. Ships with a plugin that blocks Discord's analytics and crash reporting out of the box.
+| Feature | What it does |
+| --- | --- |
+| Plugin system | 108 plugins enabled by default, 175 available, each with its own settings. |
+| Interface zoom | Scales the whole interface from 50% to 200%, under Settings > Zycord. |
+| Feature Toggles | A dedicated panel with 8 switches for the client's own behaviour. |
+| System tray | Runs in the notification area, with hide-to-tray so the window can stay closed. |
+| Message logging | Records messages locally for later review. |
+| Role and permission viewers | Shows the roles and permissions behind a member or channel. |
+| Profile theming | Changes the look of user profiles. |
+| Analytics blocking | Discord's analytics and crash reporting are blocked by default. |
+| Theme engine | Loads CSS themes, with a QuickCSS editor for live changes. |
 
-Zycord is a fork of Vencord and carries Vencord's plugin system; feature scope
-tracks upstream Vencord, with Zycord-specific shell behaviour layered on top.
+![divider](.github/assets/divider.svg)
 
----
+## Install
 
-## How it works
+1. Download `Zycord-Client-Setup-1.0.0-x64.exe` (97.7 MB) using the button above. It targets Windows 10 and Windows 11 on x64.
+2. Run the installer and launch Zycord from the Start menu.
+3. If Windows SmartScreen shows a warning, the build is unsigned. Choose "More info", then "Run anyway" to continue.
 
-For the injection chain, build outputs, and packaging internals, see
-[ARCHITECTURE.md](ARCHITECTURE.md).
+## What it is not
 
----
+- It does not modify or patch the official Discord installation. The official app is never touched, and the two can be installed side by side.
+- It is not affiliated with, endorsed by, or supported by Discord.
+- Using a modified client may violate Discord's Terms of Service. Use at your own risk.
 
-## Disclaimer
+## Build from source
 
-**Zycord is an unofficial third-party client.**
+Requires Node.js 22 or newer and pnpm 10 or newer.
 
-- Using a modified Discord client may violate Discord's Terms of Service. Discord's
-  ToS prohibits modifying or using modified versions of their client. Client mods
-  operate in a grey area, and the risk falls on whoever runs and distributes the
-  build. **Use at your own risk.**
-- Zycord is **not affiliated with, authorized by, sponsored by, or endorsed by**
-  Discord Inc., Vendicated, or the Vencord project.
-- "Discord" is a trademark of Discord Inc. and is used here only to describe the
-  service this client connects to.
-- No warranty of any kind is provided. See the licence.
+```sh
+pnpm install   # install dependencies
+pnpm build     # build the renderer and the Electron shell
+pnpm start     # run the client from source
+pnpm dist      # produce the Windows installer in release/
+```
 
-If you want a client Discord explicitly supports, use the official Discord app.
+`pnpm dist` cross-compiles through electron-builder. Building on Linux needs Wine installed and on your `PATH`.
 
----
+## Licence and credit
 
-## Licence
+Zycord Client is licensed under the GNU General Public License, version 3.0 or later. The full text is in [LICENSE](LICENSE). Attribution and modification notices are in [NOTICE](NOTICE).
 
-Zycord is licensed under the **GNU General Public License, version 3.0 or later**
-(GPL-3.0-or-later). The full licence text is in [LICENSE](./LICENSE).
+![divider](.github/assets/divider.svg)
 
-Because Zycord is a modified version of Vencord, it must remain under the
-GPL-3.0-or-later and cannot be relicensed. If you distribute a build, you must
-also make the corresponding source available.
-
-See [NOTICE](./NOTICE) for the full attribution, the modification notice required
-by GPLv3 §5(a), the list of files under other licences, and where to obtain the
-corresponding source.
-
-### Credits
-
-Zycord is built on the work of others:
-
-- **[Vencord](https://github.com/Vendicated/Vencord)** — the plugin system and
-  renderer Zycord forks. Copyright (c) Vendicated and contributors,
-  GPL-3.0-or-later.
-- **[Vesktop](https://github.com/Vencord/Vesktop)** — the Electron shell
-  architecture Zycord follows. Copyright (c) Vendicated and Vencord contributors,
-  GPL-3.0-or-later.
-
-Thank you to both projects and their contributors.
-
----
-
-## Author
-
-**Zynu**
-
-- GitHub: [@izynu](https://github.com/izynu)
-- Discord: `@izynu`
-- YouTube: [@izynu](https://youtube.com/@izynu)
-- Website: [zynu.me](https://zynu.me)
-
-Source code: <https://github.com/SahilVerlice/Zycord>
+**Zycord Client** by Zynu. [Website](https://izynu.github.io/Zycord-Client/) · [Repository](https://github.com/izynu/Zycord-Client) · [zynu.me](https://zynu.me)

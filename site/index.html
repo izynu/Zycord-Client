@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zycord Client, a Discord client for Windows</title>
+<meta name="description" content="Zycord Client is a standalone Electron app for Windows 10 and 11 that runs Discord's web app in its own window with 108 plugins enabled by default.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="wordmark" href="index.html" aria-label="Zycord home">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="markFill" x1="0" y1="0" x2="0.15" y2="1">
+            <stop offset="0" stop-color="#2E1278"/>
+            <stop offset="0.58" stop-color="#582ED6"/>
+            <stop offset="1" stop-color="#1A76F6"/>
+          </linearGradient>
+        </defs>
+        <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#markFill)"/>
+        <path d="M18.25 18.5H45.75V25.75L33.25 38.25H45.75V45.5H18.25V38.25H23L35.5 25.75H18.25Z" fill="#fff"/>
+      </svg>
+      <span>Zycord</span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#download">Download</a>
+      <a href="#features">Features</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero wrap" id="download">
+    <div class="hero-copy">
+      <p class="eyebrow">Windows desktop client</p>
+      <h1>A Discord window with 108 plugins already on.</h1>
+      <p class="lead">
+        Zycord Client is a standalone Electron app for Windows 10 and 11. It opens
+        Discord's web app in its own window and adds a plugin system with 108
+        plugins enabled by default, out of 175 in the codebase. It does not modify
+        or patch the official Discord installation.
+      </p>
+      <div class="cta">
+        <a class="btn" href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Client-Setup-1.0.0-x64.exe">
+          Download for Windows
+          <svg class="btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/izynu/Zycord-Client">View source</a>
+      </div>
+      <p class="file-meta">Zycord-Client-Setup-1.0.0-x64.exe &middot; 97.7 MB &middot; Windows 10/11 x64</p>
+      <p class="fine">
+        Open source under GPL-3.0-or-later. The build is unsigned, so Windows
+        SmartScreen will warn before it runs.
+      </p>
+    </div>
+
+    <div class="stage glass" aria-hidden="false">
+      <div class="stage-sheen" aria-hidden="true"></div>
+      <img class="app-icon" src="favicon.svg" alt="Zycord app icon: a white Z on a rounded blue and indigo tile" width="176" height="176">
+      <div class="stage-meta">
+        <span class="chip">108 plugins on</span>
+        <span class="chip">x64 build</span>
+        <span class="chip">GPL-3.0</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="features">
+    <div class="section-head">
+      <h2>What it does</h2>
+      <p>Six things in the build, each one a setting you can reach from the client's own menu.</p>
+    </div>
+
+    <div class="grid">
+      <article class="card glass">
+        <span class="num" aria-hidden="true">01</span>
+        <h3>108 plugins on by default</h3>
+        <p>175 plugins exist in the codebase. 108 of them are enabled the first time the client starts, and each has a settings section in the client.</p>
+      </article>
+      <article class="card glass">
+        <span class="num" aria-hidden="true">02</span>
+        <h3>Interface zoom, 50% to 200%</h3>
+        <p>A zoom control scales the whole interface between 50% and 200% while the window stays the same size.</p>
+      </article>
+      <article class="card glass">
+        <span class="num" aria-hidden="true">03</span>
+        <h3>Feature Toggles panel</h3>
+        <p>The Feature Toggles panel puts eight switches in one place, so those options are changed from the UI rather than a config file.</p>
+      </article>
+      <article class="card glass">
+        <span class="num" aria-hidden="true">04</span>
+        <h3>System tray with hide-to-tray</h3>
+        <p>Hiding the window sends the client to the system tray and keeps it running, so you can bring it back without a restart.</p>
+      </article>
+      <article class="card glass">
+        <span class="num" aria-hidden="true">05</span>
+        <h3>Message logging</h3>
+        <p>Message logging keeps a record of messages on your machine, stored locally rather than uploaded anywhere.</p>
+      </article>
+      <article class="card glass">
+        <span class="num" aria-hidden="true">06</span>
+        <h3>Theme engine and QuickCSS</h3>
+        <p>The theme engine applies CSS themes to the client. QuickCSS is a live editor for your own rules, applied without a reload.</p>
+      </article>
+    </div>
+
+    <p class="also">
+      Also in the build: role and permission viewers, profile theming, and
+      Discord analytics blocked by default.
+    </p>
+  </section>
+
+  <section class="wrap section" id="limits">
+    <div class="not-panel glass">
+      <h2>What it is not</h2>
+      <ul class="not-list">
+        <li>
+          <span class="tick" aria-hidden="true"></span>
+          <div>
+            <h3>Not a patch for the official app</h3>
+            <p>It installs on its own and runs Discord's web app in its own window. The official Discord installation is left untouched.</p>
+          </div>
+        </li>
+        <li>
+          <span class="tick" aria-hidden="true"></span>
+          <div>
+            <h3>Not affiliated with Discord</h3>
+            <p>Zycord is not affiliated with, endorsed by, or sponsored by Discord Inc. Discord is a trademark of Discord Inc.</p>
+          </div>
+        </li>
+        <li>
+          <span class="tick" aria-hidden="true"></span>
+          <div>
+            <h3>Not a sanctioned client</h3>
+            <p>Using a modified Discord client may violate Discord's Terms of Service. The account risk is yours to accept.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="wrap section" id="install">
+    <div class="section-head">
+      <h2>Install in three steps</h2>
+      <p>Per-user install, no administrator rights required.</p>
+    </div>
+    <ol class="steps">
+      <li class="glass">
+        <span class="step-num" aria-hidden="true">1</span>
+        <h3>Run the installer</h3>
+        <p>Download Zycord-Client-Setup-1.0.0-x64.exe and run it. The installer writes to a folder you pick for your user account.</p>
+      </li>
+      <li class="glass">
+        <span class="step-num" aria-hidden="true">2</span>
+        <h3>Clear the SmartScreen warning</h3>
+        <p>The build is unsigned, so Windows shows a warning. Choose "More info", then "Run anyway", if the file came from the download link on this page.</p>
+      </li>
+      <li class="glass">
+        <span class="step-num" aria-hidden="true">3</span>
+        <h3>Launch and sign in</h3>
+        <p>Start Zycord from the Start menu or the desktop shortcut, then sign in to Discord inside the app window.</p>
+      </li>
+    </ol>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <span class="wordmark-small">Zycord</span>
+      <span class="copyright">Copyright 2026 Zynu.</span>
+    </div>
+    <nav class="footer-links" aria-label="Footer">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms</a>
+      <a href="https://github.com/izynu/Zycord-Client">GitHub</a>
+      <a href="https://zynu.me">zynu.me</a>
+    </nav>
+  </div>
+  <div class="wrap footer-note">
+    <p>GPL-3.0-or-later. Discord is a trademark of Discord Inc. This project is not affiliated with or endorsed by Discord.</p>
+  </div>
+</footer>
+</body>
+</html>
