@@ -152,11 +152,14 @@ async function buildPatcherAsar() {
     return out;
 }
 
-async function install(branch, { all = false, force = false } = {}) {
+async function install(branch) {
+    // Every installed build is patched. Discord launches whichever app-<version>
+    // it currently points at, and that cannot be inferred from the folder name:
+    // "app-1.0.10001" sorts below "app-1.0.9999" as a string.
     const versions = discordRoots(branch);
     if (!versions.length) throw new Error(`No Discord installation found for ${branch}`);
 
-    const targets = all ? versions : [versions[0]];
+    const targets = versions;
     const built = await buildPatcherAsar();
 
     for (const v of targets) {
@@ -164,8 +167,9 @@ async function install(branch, { all = false, force = false } = {}) {
         const target = join(resources, "app.asar");
         const backup = join(resources, "_app.asar");
 
-        if (existsSync(backup) && !force) {
-            console.log(`${v.version}: already patched, skipping (use --force to repatch)`);
+        if (existsSync(backup)) {
+            copyFileSync(built, target);
+            console.log(`${v.version}: patch refreshed`);
             continue;
         }
         if (!existsSync(target)) {
@@ -181,9 +185,9 @@ async function install(branch, { all = false, force = false } = {}) {
     rmSync(join(ROOT, "dist", ".zycord-inject"), { recursive: true, force: true });
 }
 
-function uninstall(branch, { all = false } = {}) {
+function uninstall(branch) {
     const versions = discordRoots(branch);
-    const targets = all ? versions : versions.slice(0, 1);
+    const targets = versions;
     if (!targets.length) throw new Error(`No Discord installation found for ${branch}`);
 
     for (const v of targets) {
@@ -361,13 +365,13 @@ async function main(argv) {
         case "install":
             return all || branch === "all"
                 ? installAll({ force })
-                : install(branch, { all, force });
+                : install(branch);
         case "repair":
             return repair();
         case "update":
             return update();
         case "uninstall":
-            return uninstall(branch, { all });
+            return uninstall(branch);
         case "purge":
             return purge();
         case "list":

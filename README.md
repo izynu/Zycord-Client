@@ -55,7 +55,7 @@ Inside Discord you get 173 plugins, a theme engine, interface zoom from 50 to 20
 
 The build is unsigned. Windows SmartScreen will show a warning the first time. Choose **More info**, then **Run anyway**.
 
-Close Discord before installing. The installer stops if it cannot write to the client.
+Close Discord before installing, including the tray icon. Discord holds its program files open, so the installer stops and says so rather than reporting a patch that did not happen.
 
 <p align="center">
   <a href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Patcher-Setup-1.0.0.exe">
@@ -108,7 +108,7 @@ The installer opens with four actions.
 
 | Action | What it does |
 | --- | --- |
-| **Install** | Detects Discord Stable, PTB, Canary and Development. For each one found, it moves `resources/app.asar` to `resources/_app.asar` and writes the Zycord patcher in its place. |
+| **Install** | Finds Discord Stable, PTB, Canary and Development under `%LocalAppData%` and `%AppData%`. Every installed build gets patched: `resources/app.asar` is moved to `resources/_app.asar` and the Zycord patcher is written in its place. |
 | **Repair** | Rewrites the patch from the installed files without touching `_app.asar`. Use it if Discord starts but the plugins do not load. |
 | **Update** | Downloads the current Zycord build from the latest release and applies it over the patched install. |
 | **Uninstall** | Deletes the patch, renames `_app.asar` back to `app.asar`, and removes Zycord's own settings folder. Discord is left exactly as it was. |

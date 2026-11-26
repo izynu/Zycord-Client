@@ -87,12 +87,12 @@ try {
         assert.match(out, /vanilla/);
     });
 
-    check("install patches the newest stable build only", () => {
+    check("install patches every installed build", () => {
         run(appData, "install");
         assert.ok(existsSync(backup), "backup should exist");
         assert.equal(readFileSync(backup, "utf8"), "ORIGINAL:Discord:1.0.9100");
-        assert.equal(readFileSync(join(oldResources, "app.asar"), "utf8"), "ORIGINAL:Discord:1.0.9001",
-            "older build must be left alone");
+        assert.equal(readFileSync(join(oldResources, "_app.asar"), "utf8"), "ORIGINAL:Discord:1.0.9001",
+            "the older build must be patched too, since Discord may launch it");
     });
 
     check("patched asar is a self-contained injector", () => {
@@ -111,21 +111,21 @@ try {
         assert.ok(patcher.length > 10_000, "patcher bundle looks truncated");
     });
 
-    check("reinstall is a no-op", () => {
+    check("reinstall refreshes the patch without touching the backup", () => {
         const out = run(appData, "install");
-        assert.match(out, /already patched/);
+        assert.match(out, /refreshed|patched/);
         assert.equal(readFileSync(backup, "utf8"), "ORIGINAL:Discord:1.0.9100");
     });
 
-    check("--force rewrites without losing the original", () => {
-        const out = run(appData, "install", "--force");
-        assert.match(out, /patched/);
+    check("reinstalling never overwrites the original backup", () => {
+        const out = run(appData, "install");
+        assert.match(out, /refreshed|patched/);
         assert.equal(readFileSync(backup, "utf8"), "ORIGINAL:Discord:1.0.9100");
     });
 
-    check("--all patches every installed version", () => {
-        run(appData, "install", "--all");
-        assert.ok(existsSync(join(oldResources, "_app.asar")), "older build should be patched too");
+    check("every version ends up patched", () => {
+        run(appData, "install");
+        assert.ok(existsSync(join(oldResources, "_app.asar")), "older build should be patched");
         assert.equal(readFileSync(join(oldResources, "_app.asar"), "utf8"), "ORIGINAL:Discord:1.0.9001");
     });
 
@@ -217,7 +217,7 @@ try {
         }
     });
 
-    check("the newest build wins across both roots", () => {
+    check("both roots are patched, so the launched build is covered", () => {
         const sandbox3 = mkdtempSync(join(tmpdir(), "zycord-both-"));
         const roaming = join(sandbox3, "Roaming");
         const local = join(sandbox3, "Local");
@@ -230,10 +230,32 @@ try {
 
         try {
             runSplit(roaming, local, "install");
-            assert.equal(readFileSync(join(newRes, "_app.asar"), "utf8"), "ROAMING-NEW", "newest should be patched");
-            assert.ok(!existsSync(join(oldRes, "_app.asar")), "older build should be left alone");
+            assert.equal(readFileSync(join(newRes, "_app.asar"), "utf8"), "ROAMING-NEW");
+            assert.ok(existsSync(join(oldRes, "_app.asar")), "the other build must be patched too");
         } finally {
             rmSync(sandbox3, { recursive: true, force: true });
+        }
+    });
+
+    check("a version with an extra digit cannot be skipped", () => {
+        // "app-1.0.10001" sorts below "app-1.0.9999" as a string. Picking one
+        // folder by name comparison therefore patches a build Discord may never
+        // launch, and the user sees "installed" with nothing changed.
+        const sandbox4 = mkdtempSync(join(tmpdir(), "zycord-digits-"));
+        const local = join(sandbox4, "Local");
+        const oldRes = join(local, "Discord", "app-1.0.9999", "resources");
+        const newRes = join(local, "Discord", "app-1.0.10001", "resources");
+        mkdirSync(oldRes, { recursive: true });
+        mkdirSync(newRes, { recursive: true });
+        writeFileSync(join(oldRes, "app.asar"), "OLDER");
+        writeFileSync(join(newRes, "app.asar"), "NEWER");
+
+        try {
+            runSplit(join(sandbox4, "Roaming"), local, "install");
+            assert.equal(readFileSync(join(oldRes, "_app.asar"), "utf8"), "OLDER");
+            assert.equal(readFileSync(join(newRes, "_app.asar"), "utf8"), "NEWER");
+        } finally {
+            rmSync(sandbox4, { recursive: true, force: true });
         }
     });
 

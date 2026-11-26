@@ -27,7 +27,6 @@ const INSTALLER_DIR = join(ROOT, "installer");
 const PAYLOAD = join(INSTALLER_DIR, "payload");
 const RELEASE = join(ROOT, "release");
 
-const CHANNELS = ["stable", "ptb", "canary", "dev"];
 const ASSETS = [
     "patcher.js",
     "preload.js",
@@ -80,12 +79,11 @@ async function main() {
 
     const patched = await buildPatchedAsar();
 
+    // One payload: every Discord build gets the same file, so there is nothing
+    // to choose between at install time.
     rmSync(PAYLOAD, { recursive: true, force: true });
-    for (const channel of CHANNELS) {
-        const dir = join(PAYLOAD, channel);
-        mkdirSync(dir, { recursive: true });
-        copyFileSync(patched, join(dir, "app.asar"));
-    }
+    mkdirSync(PAYLOAD, { recursive: true });
+    copyFileSync(patched, join(PAYLOAD, "app.asar"));
     rmSync(patched, { force: true });
 
     mkdirSync(RELEASE, { recursive: true });
@@ -106,7 +104,7 @@ async function main() {
     // The Update action downloads this single file and copies it into place,
     // so it must be byte-identical to what the installer carries.
     const payloadAsar = join(RELEASE, "Zycord-Patcher.asar");
-    copyFileSync(join(PAYLOAD, "stable", "app.asar"), payloadAsar);
+    copyFileSync(join(PAYLOAD, "app.asar"), payloadAsar);
 
     rmSync(PAYLOAD, { recursive: true, force: true });
     console.log(`\nWrote ${exe}`);
