@@ -26,13 +26,43 @@ process.env.DATA_DIR = userData;
 
 if (process.platform === "win32") app.setAppUserModelId(APP_ID);
 
+// discord:// links arrive as a command-line argument, e.g. discord://-/channels/@me.
+// Parse once here so a cold start and the second-instance handler agree.
+function discordDeepLink(argv: string[]): string | undefined {
+    const match = argv.find(arg => /^discord(?:-canary|-ptb)?:\/\//i.test(arg));
+    if (!match) return undefined;
+    try {
+        // discord://-/channels/@me → https://discord.com/channels/@me
+        const path = new URL(match).pathname.replace(/^\/-?/, "");
+        return discordUrl(path || "channels/@me");
+    } catch {
+        return undefined;
+    }
+}
+
+function openDeepLink(argv: string[]) {
+    const target = discordDeepLink(argv);
+    if (!target) return false;
+    const win = getMainWindow();
+    if (!win) return false;
+    if (win.isMinimized()) win.restore();
+    win.show();
+    win.focus();
+    win.loadURL(target);
+    return true;
+}
+
 if (!app.requestSingleInstanceLock()) {
     app.quit();
 } else {
-    app.on("second-instance", () => {
+    // A second launch without a discord:// argument should just bring the
+    // existing window forward; one with a link also navigates it.
+    app.on("second-instance", (_event, argv) => {
+        if (openDeepLink(argv)) return;
         const win = getMainWindow();
         if (!win) return;
         if (win.isMinimized()) win.restore();
+        if (!win.isVisible()) win.show();
         win.focus();
     });
 
@@ -62,7 +92,10 @@ if (!app.requestSingleInstanceLock()) {
 
         configureSession();
         buildMenu();
-        const win = createMainWindow();
+        // Using the launch link as the initial URL avoids a second navigation
+        // that would abort the first and log ERR_ABORTED.
+        const launchLink = discordDeepLink(process.argv.slice(1));
+        const win = createMainWindow(launchLink);
         // After the window: initTray binds visibility listeners to it. Failure
         // here must not cost the user their client, hence the catch.
         try {
@@ -94,3 +127,4 @@ export { discordUrl };
 // Tray state is re-exported so the bundling test harness can assert on the live
 // instance without reaching into module internals.
 export { destroyTray, getTray, getTrayIcon, getTrayMenu, isQuitting, markQuitting } from "./tray";
+export { discordDeepLink };

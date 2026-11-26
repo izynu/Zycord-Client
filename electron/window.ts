@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { BrowserWindow, desktopCapturer, dialog, Menu, screen, session, shell } from "electron";
+import { app, BrowserWindow, desktopCapturer, dialog, Menu, screen, session, shell } from "electron";
 import { join } from "path";
 
 import {
@@ -12,11 +12,13 @@ import {
     DEFAULT_HEIGHT,
     DEFAULT_WIDTH,
     discordUrl,
+    GITHUB_URL,
     MIN_HEIGHT,
     MIN_WIDTH
 } from "./constants";
 import { ZycordIpc } from "./ipc";
 import { getTray, isQuitting } from "./tray";
+import { clampToWorkArea, loadWindowState, trackWindowState } from "./windowState";
 
 let mainWin: BrowserWindow | null = null;
 export const getMainWindow = () => mainWin;
@@ -50,12 +52,15 @@ function makeLinksOpenExternally(win: BrowserWindow) {
     });
 }
 
-export function createMainWindow() {
+export function createMainWindow(startUrl = discordUrl()) {
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+    const saved = loadWindowState();
+    const bounds = saved
+        ? clampToWorkArea(saved)
+        : { width: Math.min(DEFAULT_WIDTH, width), height: Math.min(DEFAULT_HEIGHT, height) };
 
     mainWin = new BrowserWindow({
-        width: Math.min(DEFAULT_WIDTH, width),
-        height: Math.min(DEFAULT_HEIGHT, height),
+        ...bounds,
         minWidth: MIN_WIDTH,
         minHeight: MIN_HEIGHT,
         title: "Zycord",
@@ -64,7 +69,9 @@ export function createMainWindow() {
         // A native Windows title bar and frame. Without this Electron defaults to
         // frameless, which makes the app read as "a web page in a window".
         frame: true,
-        autoHideMenuBar: true,
+        // The menu bar is part of what makes a Windows app look native. Alt still
+        // hides it temporarily, and F10 or Alt brings it back.
+        autoHideMenuBar: false,
         show: false,
         webPreferences: {
             nodeIntegration: false,
@@ -89,9 +96,23 @@ export function createMainWindow() {
     });
 
     // Avoid the white flash while Discord's first paint is pending.
-    mainWin.once("ready-to-show", () => mainWin?.show());
+    mainWin.once("ready-to-show", () => {
+        if (saved?.maximized) mainWin?.maximize();
+        mainWin?.show();
+    });
+
+    // An Alt keypress while the bar is auto-hidden brings the native menu back
+    // instead of leaving it gone for the rest of the session.
+    mainWin.webContents.on("before-input-event", (event, input) => {
+        if (input.type !== "keyDown" || !mainWin || mainWin.isMenuBarVisible()) return;
+        if (input.key !== "Alt") return;
+        mainWin.setMenuBarVisibility(true);
+        // Keep Alt from also opening Windows' own foreground menu overlay.
+        event.preventDefault();
+    });
 
     makeLinksOpenExternally(mainWin);
+    trackWindowState(mainWin);
 
     // Close-to-tray: hiding keeps Discord's session and audio alive. Only
     // intercept while a tray icon exists to reopen the window, and never when
@@ -111,7 +132,7 @@ export function createMainWindow() {
         showStartupError(String(args[0] ?? "Unknown error"));
     });
 
-    mainWin.loadURL(discordUrl()).catch(err => {
+    mainWin.loadURL(startUrl).catch(err => {
         console.error("[Zycord] Failed to load Discord:", err);
         if (mainWin && !mainWin.isDestroyed()) {
             mainWin.loadURL("about:blank");
@@ -133,7 +154,6 @@ function showStartupError(message: string) {
         defaultId: 0,
         noLink: true
     }).then(() => {
-        const { app } = require("electron");
         app.quit();
     });
 }
@@ -141,33 +161,19 @@ function showStartupError(message: string) {
 export function buildMenu() {
     const template = [
         {
-            label: "Zycord",
+            label: "&File",
             submenu: [
                 {
-                    label: "About Zycord",
-                    click: () => {
-                        if (!mainWin) return;
-                        dialog.showMessageBox(mainWin, {
-                            type: "info",
-                            title: "About Zycord",
-                            message: "Zycord Client",
-                            detail: `Zycord ${process.env.ZYCORD_VERSION ?? "1.0.0"}\nBy Zynu\n\nElectron ${process.versions.electron}\nChromium ${process.versions.chrome}\n\nBased on Vencord, Copyright (c) Vendicated and contributors.\nLicensed under GPL-3.0-or-later.`,
-                            buttons: ["OK"],
-                            noLink: true
-                        });
-                    }
+                    label: "Hide to Tray",
+                    accelerator: "CmdOrCtrl+W",
+                    click: () => mainWin?.hide()
                 },
                 { type: "separator" },
-                { role: "reload" },
-                { role: "forceReload" },
-                { role: "toggleDevTools" },
-                { type: "separator" },
-                { label: "Relaunch", click: () => { const { app } = require("electron"); app.relaunch(); app.exit(0); } },
-                { label: "Quit Zycord", role: "quit" }
+                { label: "Quit Zycord", accelerator: "CmdOrCtrl+Q", role: "quit" }
             ]
         },
         {
-            label: "Edit",
+            label: "&Edit",
             submenu: [
                 { role: "undo" }, { role: "redo" }, { type: "separator" },
                 { role: "cut" }, { role: "copy" }, { role: "paste" },
@@ -175,15 +181,47 @@ export function buildMenu() {
             ]
         },
         {
-            label: "View",
+            label: "&View",
             submenu: [
+                { role: "reload" },
+                { role: "forceReload" },
+                { role: "toggleDevTools" },
+                { type: "separator" },
                 { role: "resetZoom" }, { role: "zoomIn" }, { role: "zoomOut" },
-                { type: "separator" }, { role: "togglefullscreen" }
+                { type: "separator" },
+                { role: "togglefullscreen" }
+            ]
+        },
+        {
+            label: "&Help",
+            submenu: [
+                {
+                    label: "About Zycord",
+                    click: () => showAbout()
+                },
+                {
+                    label: "Zycord on GitHub",
+                    click: () => shell.openExternal(GITHUB_URL)
+                }
             ]
         }
     ] as const;
 
     Menu.setApplicationMenu(Menu.buildFromTemplate(template as any));
+}
+
+function showAbout() {
+    const options = {
+        type: "info" as const,
+        title: "About Zycord",
+        message: "Zycord Client",
+        detail: `Zycord ${process.env.ZYCORD_VERSION ?? "1.0.0"}\nBy Zynu\n\nElectron ${process.versions.electron}\nChromium ${process.versions.chrome}\n\nBased on Vencord, Copyright (c) Vendicated and contributors.\nLicensed under GPL-3.0-or-later.`,
+        buttons: ["OK"],
+        noLink: true
+    };
+
+    if (mainWin && !mainWin.isDestroyed()) dialog.showMessageBox(mainWin, options);
+    else dialog.showMessageBox(options);
 }
 
 export function configureSession() {
