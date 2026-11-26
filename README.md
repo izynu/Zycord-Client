@@ -115,12 +115,14 @@ The installer opens with four actions.
 
 `_app.asar` is your original client. The installer never overwrites it, so Uninstall always has something to restore.
 
+If a previous install ever replaced that backup, the client cannot start: Zycord would open itself twice. It stops with a message instead of crashing, and the fix is to reinstall Discord from discord.com and then run this installer again.
+
 Discord replaces `app.asar` when it updates itself. Zycord notices the new version at startup and re-applies the patch automatically, so you do not need to reinstall after a Discord update.
 
 The same actions are available from the command line, which is what the build scripts use:
 
 ```sh
-pnpm inject                 # install, newest version of each detected channel
+pnpm inject                 # install into every detected Discord build
 pnpm inject:list            # show which channels are installed and patched
 pnpm uninject               # restore the original app.asar
 node installer/cli.mjs repair
