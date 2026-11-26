@@ -2,7 +2,7 @@
     "name": "zycord",
     "version": "1.0.0",
     "private": "true",
-    "description": "Zycord Client \u2014 a Discord client. By Zynu.",
+    "description": "Zycord Client — a Discord client. By Zynu.",
     "homepage": "https://izynu.github.io/Zycord-Client/",
     "bugs": {
         "url": "https://github.com/izynu/Zycord-Client/issues"
@@ -24,13 +24,15 @@
         "start": "electron .",
         "generatePluginJson": "tsx scripts/generatePluginList.ts",
         "generateTypes": "tspc --emitDeclarationOnly --declaration --outDir packages/vencord-types --allowJs false",
-        "inject": "node scripts/runInstaller.mjs -- --install",
-        "uninject": "node scripts/runInstaller.mjs -- --uninstall",
+        "inject": "node installer/cli.mjs install",
+        "uninject": "node installer/cli.mjs uninstall",
+        "inject:list": "node installer/cli.mjs list",
         "lint": "oxlint",
         "fmt": "oxfmt \"**/*.{css,html,json,yml,yaml}\"",
         "fmt:check": "pnpm fmt --check",
         "lint:fix": "pnpm lint --fix",
         "test:ts": "tsc --noEmit",
+        "test:installer": "node installer/test.mjs",
         "bump": "./scripts/bump.sh",
         "dist": "pnpm build && electron-builder --win nsis --x64",
         "dist:dir": "pnpm build && electron-builder --win dir --x64",
@@ -45,6 +47,7 @@
         "gifenc": "catalog:"
     },
     "devDependencies": {
+        "@electron/asar": "3.4.1",
         "@stylistic/eslint-plugin": "catalog:",
         "@types/chrome": "catalog:",
         "@types/node": "catalog:",
@@ -85,7 +88,7 @@
         "appId": "app.zycord.client",
         "productName": "Zycord",
         "executableName": "Zycord",
-        "copyright": "Copyright \u00a9 2026 Zynu. Based on Vencord by Vendicated and contributors (GPL-3.0-or-later).",
+        "copyright": "Copyright © 2026 Zynu. Based on Vencord by Vendicated and contributors (GPL-3.0-or-later).",
         "directories": {
             "output": "release",
             "buildResources": "build"

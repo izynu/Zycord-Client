@@ -302,6 +302,9 @@ importers:
         specifier: 'catalog:'
         version: https://codeload.github.com/mattdesl/gifenc/tar.gz/64842fca317b112a8590f8fef2bf3825da8f6fe3
     devDependencies:
+      '@electron/asar':
+        specifier: 3.4.1
+        version: 3.4.1
       '@stylistic/eslint-plugin':
         specifier: 'catalog:'
         version: 5.10.0

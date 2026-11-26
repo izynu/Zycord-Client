@@ -28,6 +28,7 @@
   <a href="#install">Install</a> &nbsp;|&nbsp;
   <a href="#what-it-does">Features</a> &nbsp;|&nbsp;
   <a href="#every-feature">All 173 plugins</a> &nbsp;|&nbsp;
+  <a href="#patching-an-existing-discord-install">Patch</a> &nbsp;|&nbsp;
   <a href="#build-from-source">Build</a> &nbsp;|&nbsp;
   <a href="#what-it-is-not">Disclaimer</a>
 </p>
@@ -52,6 +53,8 @@ It installs to its own directory and runs as a separate program. The official Di
 | 3 | Launch Zycord from the Start menu or the desktop shortcut. |
 
 The build is unsigned. Windows SmartScreen will show a warning the first time. Choose **More info**, then **Run anyway**.
+
+The app is a standalone client and does not touch the official Discord installation. If you already use Discord's desktop app and would rather patch it in place, `pnpm inject` swaps `resources/app.asar` for the Zycord patcher and keeps the original as `_app.asar`. `pnpm uninject` restores it. See [Patching an existing Discord install](#patching-an-existing-discord-install).
 
 <p align="center">
   <a href="https://github.com/izynu/Zycord-Client/releases/latest/download/Zycord-Client-Setup-1.0.0-x64.exe">
@@ -98,6 +101,22 @@ Every feature and all 173 plugins are documented on the website, with screenshot
 
 ---
 
+## Patching an existing Discord install
+
+This is optional. It is how tools of this kind are usually used, and it means you keep using the Discord window you already have.
+
+```sh
+pnpm inject                          # stable channel, newest version
+pnpm inject -- --branch canary       # a different channel
+pnpm inject -- --all                 # every installed version
+pnpm uninject                        # restore the original app.asar
+pnpm inject:list                     # show which installs are patched
+```
+
+Discord replaces `app.asar` on every update, so the patch is applied again at runtime when the client notices a new version. If a patch ever fails, `pnpm uninject` puts the original file back.
+
+---
+
 ## Build from source
 
 Requires Node.js 22 or newer and pnpm 10 or newer.
@@ -117,7 +136,7 @@ pnpm dist      # produce the Windows installer in release/
 
 | | |
 | --- | --- |
-| **Not a patch of the official app** | The official Discord installation is never modified. Both can run side by side. |
+| **Not a replacement for Discord** | It needs Discord installed. The desktop client and the patcher run side by side. |
 | **Not affiliated with Discord** | No endorsement, support, or partnership exists. |
 | **Not guaranteed to stay allowed** | Using a modified client may violate Discord's Terms of Service. Use at your own risk. |
 
