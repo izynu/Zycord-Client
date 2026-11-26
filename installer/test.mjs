@@ -14,7 +14,7 @@
 
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { createRequire } from "node:module";
@@ -27,6 +27,14 @@ const CLI = join(ROOT, "installer", "cli.mjs");
 function run(appData, ...args) {
     return execFileSync(process.execPath, [CLI, ...args], {
         env: { ...process.env, APPDATA: appData, LOCALAPPDATA: appData },
+        encoding: "utf8"
+    });
+}
+
+/** Run against distinct Roaming and Local roots, as Windows really has. */
+function runSplit(roaming, local, ...args) {
+    return execFileSync(process.execPath, [CLI, ...args], {
+        env: { ...process.env, APPDATA: roaming, LOCALAPPDATA: local },
         encoding: "utf8"
     });
 }
@@ -184,6 +192,49 @@ try {
         assert.ok(!existsSync(backup), "backup should be consumed");
         assert.ok(!existsSync(join(appData, "Discord", "zycord-patch.json")), "state file should be gone");
         assert.ok(!existsSync(dataDir), "data directory should be gone");
+    });
+
+    check("detects an install under LocalAppData, the real default", () => {
+        // Discord installs to %LocalAppData%; searching only %AppData% misses it.
+        const sandbox2 = mkdtempSync(join(tmpdir(), "zycord-local-"));
+        const roaming = join(sandbox2, "Roaming");
+        const local = join(sandbox2, "Local");
+        const resources = join(local, "Discord", "app-1.0.9400", "resources");
+        mkdirSync(resources, { recursive: true });
+        writeFileSync(join(resources, "app.asar"), "LOCAL-ORIGINAL");
+
+        try {
+            const out = runSplit(roaming, local, "list");
+            assert.match(out, /1\.0\.9400/);
+            assert.match(out, /vanilla/);
+
+            const installOut = runSplit(roaming, local, "install");
+            assert.match(installOut, /patched/);
+            assert.equal(readFileSync(join(resources, "_app.asar"), "utf8"), "LOCAL-ORIGINAL");
+            assert.ok(statSync(join(resources, "app.asar")).size > 100_000);
+        } finally {
+            rmSync(sandbox2, { recursive: true, force: true });
+        }
+    });
+
+    check("the newest build wins across both roots", () => {
+        const sandbox3 = mkdtempSync(join(tmpdir(), "zycord-both-"));
+        const roaming = join(sandbox3, "Roaming");
+        const local = join(sandbox3, "Local");
+        const oldRes = join(local, "Discord", "app-1.0.9200", "resources");
+        const newRes = join(roaming, "Discord", "app-1.0.9300", "resources");
+        mkdirSync(oldRes, { recursive: true });
+        mkdirSync(newRes, { recursive: true });
+        writeFileSync(join(oldRes, "app.asar"), "LOCAL-OLD");
+        writeFileSync(join(newRes, "app.asar"), "ROAMING-NEW");
+
+        try {
+            runSplit(roaming, local, "install");
+            assert.equal(readFileSync(join(newRes, "_app.asar"), "utf8"), "ROAMING-NEW", "newest should be patched");
+            assert.ok(!existsSync(join(oldRes, "_app.asar")), "older build should be left alone");
+        } finally {
+            rmSync(sandbox3, { recursive: true, force: true });
+        }
     });
 
     check("the scratch staging directory is cleaned up", () => {

@@ -62,14 +62,30 @@ function loadAsar() {
     throw new Error("Could not load @electron/asar. Run pnpm install first.");
 }
 
-function discordRoot(branch) {
+/**
+ * Discord installs to %LocalAppData%; older and portable layouts use
+ * %AppData%. Both are searched, so a real installation is never missed.
+ */
+function discordRoots(branch) {
     const name = BRANCHES[branch];
     if (!name) throw new Error(`Unknown branch "${branch}". Use stable, ptb, canary or development.`);
 
-    const appData = process.env.APPDATA || process.env.LOCALAPPDATA;
-    if (!appData) throw new Error("APPDATA is not set. This command only works on Windows.");
+    const roots = [process.env.LOCALAPPDATA, process.env.APPDATA]
+        .filter(Boolean)
+        .map(base => join(base, name));
 
-    return join(appData, name);
+    if (!roots.length) throw new Error("Neither LOCALAPPDATA nor APPDATA is set. This command only works on Windows.");
+
+    // Sorted across both roots so the newest build on the machine is first,
+    // regardless of which folder it lives in.
+    return roots
+        .flatMap(root => versionDirs(root).map(v => ({ ...v, root })))
+        .sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true }));
+}
+
+/** Newest install for a branch across both roots, or null. */
+function discordRoot(branch) {
+    return discordRoots(branch)[0] ?? null;
 }
 
 /** Every installed app-<version> folder, newest first. */
@@ -85,16 +101,15 @@ function versionDirs(root) {
 function list() {
     let found = false;
     for (const branch of Object.keys(BRANCHES)) {
-        const root = discordRoot(branch);
-        const versions = versionDirs(root);
+        const versions = discordRoots(branch);
         if (!versions.length) continue;
         found = true;
 
-        console.log(`\n${branch} (${root})`);
+        console.log(`\n${branch}`);
         for (const v of versions) {
             const target = join(v.dir, "resources", "app.asar");
             const backup = join(v.dir, "resources", "_app.asar");
-            console.log(`  ${v.version.padEnd(16)} ${existsSync(backup) ? "patched" : "vanilla"}`);
+            console.log(`  ${v.version.padEnd(16)} ${existsSync(backup) ? "patched" : "vanilla"}   ${v.root}`);
             if (!existsSync(target)) console.log("    (resources/app.asar missing)");
         }
     }
@@ -138,9 +153,8 @@ async function buildPatcherAsar() {
 }
 
 async function install(branch, { all = false, force = false } = {}) {
-    const root = discordRoot(branch);
-    const versions = versionDirs(root);
-    if (!versions.length) throw new Error(`No Discord installation found for ${branch} at ${root}`);
+    const versions = discordRoots(branch);
+    if (!versions.length) throw new Error(`No Discord installation found for ${branch}`);
 
     const targets = all ? versions : [versions[0]];
     const built = await buildPatcherAsar();
@@ -168,10 +182,9 @@ async function install(branch, { all = false, force = false } = {}) {
 }
 
 function uninstall(branch, { all = false } = {}) {
-    const root = discordRoot(branch);
-    const versions = versionDirs(root);
+    const versions = discordRoots(branch);
     const targets = all ? versions : versions.slice(0, 1);
-    if (!targets.length) throw new Error(`No Discord installation found for ${branch} at ${root}`);
+    if (!targets.length) throw new Error(`No Discord installation found for ${branch}`);
 
     for (const v of targets) {
         const resources = join(v.dir, "resources");
@@ -207,8 +220,8 @@ async function installAll({ force = false } = {}) {
     let count = 0;
 
     for (const branch of Object.keys(BRANCHES)) {
-        const root = discordRoot(branch);
-        const versions = versionDirs(root);
+        const versions = discordRoots(branch);
+        const root = versions[0]?.root;
         if (!versions.length) continue;
 
         for (const v of versions) {
@@ -252,8 +265,7 @@ async function repair() {
     let repaired = 0;
 
     for (const branch of Object.keys(BRANCHES)) {
-        const root = discordRoot(branch);
-        for (const v of versionDirs(root)) {
+        for (const v of discordRoots(branch)) {
             const resources = join(v.dir, "resources");
             const backup = join(resources, "_app.asar");
             if (!existsSync(backup)) continue;
@@ -284,12 +296,10 @@ async function update() {
 
 function purge() {
     for (const branch of Object.keys(BRANCHES)) {
-        const root = discordRoot(branch);
-        const state = readInstallState(root);
-        const versions = versionDirs(root);
-        if (!versions.length) continue;
+        const installs = discordRoots(branch);
+        if (!installs.length) continue;
 
-        for (const v of versions) {
+        for (const v of installs) {
             const resources = join(v.dir, "resources");
             const backup = join(resources, "_app.asar");
             if (!existsSync(backup)) continue;
@@ -299,8 +309,12 @@ function purge() {
             console.log(`${branch} ${v.version}: restored the original app.asar`);
         }
 
-        rmSync(installStatePath(root), { force: true });
-        if (state) console.log(`${branch}: removed Zycord install state`);
+        for (const root of new Set(installs.map(v => v.root))) {
+            if (readInstallState(root)) {
+                rmSync(installStatePath(root), { force: true });
+                console.log(`${branch}: removed Zycord install state`);
+            }
+        }
     }
 
     const dataDir = join(process.env.APPDATA ?? "", "Zycord");

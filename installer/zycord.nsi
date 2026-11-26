@@ -59,46 +59,57 @@ Var RadioRepair
 Var RadioUpdate
 Var RadioUninstall
 Var Patched
+Var Result
 
 ; --------------------------------------------------------------- channel scan
 
-; $R0 becomes "<appdata>\<Channel>\app-<newest>", or "" when that channel is
-; not installed. ReadDir order is unspecified, so compare names as decimals:
-; app-1.0.9200 sorts above app-1.0.9 by embedded-numeric field order only if we
-; compare field by field, which is what the version cookie does below.
+; Discord installs to %LocalAppData%\Discord on Windows. Older and repackaged
+; builds, and every portable layout, put it under %AppData% (Roaming) instead,
+; so both roots are searched. A single root misses real installations.
 !macro FindNewest CHANNEL FUNCNAME
 Function ${FUNCNAME}
     StrCpy $R0 ""
-    StrCpy $R1 "$APPDATA\${CHANNEL}"
-    ${IfNot} ${FileExists} "$R1\app-*"
+    StrCpy $R2 ""
+    StrCpy $R8 ""
+
+    ; Pass one: LocalAppData. Pass two: AppData. Both are checked before giving
+    ; up, and the newest build across either root wins.
+    StrCpy $R7 "$LOCALAPPDATA\${CHANNEL}"
+    Call ScanRoot${FUNCNAME}
+    StrCpy $R7 "$APPDATA\${CHANNEL}"
+    Call ScanRoot${FUNCNAME}
+
+    ${If} $R2 != ""
+        StrCpy $R0 "$R8\$R2"
+    ${EndIf}
+FunctionEnd
+
+Function ScanRoot${FUNCNAME}
+    ${IfNot} ${FileExists} "$R7\app-*"
         Return
     ${EndIf}
 
-    StrCpy $R2 ""
-    FindFirst $R3 $R4 "$R1\app-*"
-    loop:
+    FindFirst $R3 $R4 "$R7\app-*"
+    rootloop:
         ${If} $R4 == ""
-            Goto loopdone
+            Goto rootdone
         ${EndIf}
-        ${If} ${FileExists} "$R1\$R4\resources\app.asar"
+        ${If} ${FileExists} "$R7\$R4\resources\app.asar"
             Call CompareVersionNames
             ${If} $R6 == "newer"
                 StrCpy $R2 "$R4"
+                StrCpy $R8 "$R7"
             ${EndIf}
         ${EndIf}
         FindNext $R3 $R4
-        Goto loop
-    loopdone:
+        Goto rootloop
+    rootdone:
     FindClose $R3
-
-    ${If} $R2 != ""
-        StrCpy $R0 "$R1\$R2"
-    ${EndIf}
 FunctionEnd
 !macroend
 
-; Compares $R4 (candidate) against $R2 (current best); sets $R6 to
-; "newer" when the candidate should win. Both are "app-<version>" names.
+; Compares $R4 (candidate) against $R2 (current best); sets $R6 to "newer"
+; when the candidate should win. Version strings sort correctly as decimals.
 Function CompareVersionNames
     StrCpy $R6 "older"
     ${If} $R2 == ""
@@ -132,7 +143,7 @@ Function PatchChannel
     ${EndIf}
 
     ${If} $R0 == ""
-        DetailPrint "Not installed or already patched: $Channel"
+        DetailPrint "Discord $Channel: not found"
         Return
     ${EndIf}
 
@@ -291,6 +302,8 @@ Function .onInit
     ${If} $Action == ""
         StrCpy $Action "install"
     ${EndIf}
+
+    StrCpy $Result ""
 FunctionEnd
 
 Function ActionPage
@@ -349,10 +362,88 @@ FunctionEnd
 !insertmacro MUI_PAGE_WELCOME
 Page custom ActionPage ActionPageLeave
 !insertmacro MUI_PAGE_INSTFILES
-!insertmacro MUI_PAGE_FINISH
+Page custom FinishPage
 
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
+
+; The stock finish page says "Completed" no matter what happened, so a run that
+; found no Discord still looked successful. This page reports the real outcome.
+Function FinishPage
+    ${If} $Result == "notfound"
+        !insertmacro MUI_HEADER_TEXT "Discord was not found" "No patched install was created."
+        nsDialogs::Create 1018
+        Pop $Dlg
+        ${If} $Dlg == error
+            Abort
+        ${EndIf}
+
+        ${NSD_CreateLabel} 0 0u 100% 24u "Zycord looked for Discord in both of these folders:"
+        Pop $R1
+        ${NSD_CreateLabel} 8u 24u 100% 20u "$LOCALAPPDATA\Discord"
+        Pop $R1
+        ${NSD_CreateLabel} 8u 42u 100% 20u "$APPDATA\Discord"
+        Pop $R1
+        ${NSD_CreateLabel} 0 68u 100% 40u "If Discord is installed somewhere else, or only the Microsoft Store version is installed, tell Zynu so the installer can be extended. Nothing was changed on this PC."
+        Pop $R1
+        nsDialogs::Show
+        Return
+    ${EndIf}
+
+    ${If} $Result == "noupdate"
+        !insertmacro MUI_HEADER_TEXT "Nothing to update" "Zycord is not currently installed in Discord."
+        nsDialogs::Create 1018
+        Pop $Dlg
+        ${If} $Dlg == error
+            Abort
+        ${EndIf}
+        ${NSD_CreateLabel} 0 0u 100% 40u "Update only applies to a Discord that already has Zycord in it. Run the installer again and choose Install."
+        Pop $R1
+        nsDialogs::Show
+        Return
+    ${EndIf}
+
+    ${If} $Result == "installed"
+        !insertmacro MUI_HEADER_TEXT "Zycord is installed" "Start Discord the way you normally do."
+        nsDialogs::Create 1018
+        Pop $Dlg
+        ${If} $Dlg == error
+            Abort
+        ${EndIf}
+        ${NSD_CreateLabel} 0 0u 100% 44u "Discord has been patched. Open Discord normally; the plugin settings are under Settings, then Zycord. Your original client is kept as _app.asar, so Uninstall restores it."
+        Pop $R1
+        nsDialogs::Show
+        Return
+    ${EndIf}
+
+    ${If} $Result == "updated"
+        !insertmacro MUI_HEADER_TEXT "Zycord is updated" "Start Discord the way you normally do."
+        nsDialogs::Create 1018
+        Pop $Dlg
+        ${If} $Dlg == error
+            Abort
+        ${EndIf}
+        ${NSD_CreateLabel} 0 0u 100% 40u "The latest Zycord build has been applied. Start Discord normally."
+        Pop $R1
+        nsDialogs::Show
+        Return
+    ${EndIf}
+
+    ${If} $Result == "uninstalled"
+        !insertmacro MUI_HEADER_TEXT "Zycord was removed" "Discord is back to its original state."
+        nsDialogs::Create 1018
+        Pop $Dlg
+        ${If} $Dlg == error
+            Abort
+        ${EndIf}
+        ${NSD_CreateLabel} 0 0u 100% 40u "The original app.asar has been restored and Zycord's settings folder was removed. Discord will start normally."
+        Pop $R1
+        nsDialogs::Show
+        Return
+    ${EndIf}
+
+    Abort
+FunctionEnd
 
 !insertmacro MUI_LANGUAGE "English"
 
@@ -360,6 +451,7 @@ Page custom ActionPage ActionPageLeave
 
 Section
     ${If} $Action == "uninstall"
+        StrCpy $Result "uninstalled"
         Call RestoreEverything
         RMDir /r "$APPDATA\Zycord"
         DetailPrint "Removed Zycord settings and themes."
@@ -369,17 +461,21 @@ Section
 
     ${If} $Action == "update"
         Call DoUpdate
+        ${If} $Patched == 0
+            StrCpy $Result "noupdate"
+        ${Else}
+            StrCpy $Result "updated"
+        ${EndIf}
         Goto finish
     ${EndIf}
 
     Call PatchEverything
 
     ${If} $Patched == 0
-        MessageBox MB_ICONEXCLAMATION|MB_YESNO \
-            "No Discord installation was found, or Discord is already patched.$\r$\n$\r$\nOpen the Zycord page for help?" \
-            IDNO finish
-        ExecShell "open" "${APP_URL}#install"
+        StrCpy $Result "notfound"
+        Goto finish
     ${Else}
+        StrCpy $Result "installed"
         CreateDirectory "$APPDATA\Zycord"
         WriteUninstaller "$APPDATA\Zycord\Uninstall Zycord.exe"
         WriteRegStr HKCU "${UNINST_KEY}" "DisplayName" "Zycord"
@@ -389,6 +485,18 @@ Section
         WriteRegStr HKCU "${UNINST_KEY}" "UninstallString" '"$APPDATA\Zycord\Uninstall Zycord.exe" /ACTION=uninstall'
         WriteRegStr HKCU "${UNINST_KEY}" "NoModify" "1"
         WriteRegStr HKCU "${UNINST_KEY}" "NoRepair" "1"
+    ${EndIf}
+
+    ${If} $Result == "installed"
+        DetailPrint "Done. Discord was patched."
+    ${ElseIf} $Result == "notfound"
+        DetailPrint "Nothing was changed: Discord was not found."
+    ${ElseIf} $Result == "updated"
+        DetailPrint "Done. Zycord was updated."
+    ${ElseIf} $Result == "noupdate"
+        DetailPrint "Nothing was changed: Zycord is not installed."
+    ${ElseIf} $Result == "uninstalled"
+        DetailPrint "Done. Discord was restored."
     ${EndIf}
 
     finish:
